@@ -4,19 +4,12 @@ package es.bsc.conn.types;
  * Copy from integratedtoolkit.types.resources.components
  */
 public class Processor {
-    // Types TODO: where is the place for that?
-    public static final int UNASSIGNED_INT 		= -1;
-    public static final String UNASSIGNED_STR 	= "[unassigned]";
-    public static final float UNASSIGNED_FLOAT 	= (float) -1.0;
-    public static final int ZERO_INT			= 0;
-    public static final int ONE_INT				= 1;
-
-    private String name = UNASSIGNED_STR;
-    private int computingUnits = ZERO_INT;
-    private float speed = UNASSIGNED_FLOAT;
-    private String architecture = UNASSIGNED_STR;
-    private String propName = UNASSIGNED_STR;
-    private String propValue = UNASSIGNED_STR;
+    private String name = BasicTypes.UNASSIGNED_STR;
+    private int computingUnits = BasicTypes.ZERO_INT;
+    private float speed = BasicTypes.UNASSIGNED_FLOAT;
+    private String architecture = BasicTypes.UNASSIGNED_STR;
+    private String propName = BasicTypes.UNASSIGNED_STR;
+    private String propValue = BasicTypes.UNASSIGNED_STR;
 
     public Processor() {
     }

@@ -4,15 +4,53 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class SoftwareDescription {
-    public static final String UNASSIGNED_STR 	= "[unassigned]";
     // Operating System
-    protected String operatingSystemType = UNASSIGNED_STR;
-    protected String operatingSystemDistribution = UNASSIGNED_STR;
-    protected String operatingSystemVersion = UNASSIGNED_STR;
+    protected String operatingSystemType = BasicTypes.UNASSIGNED_STR;
+    protected String operatingSystemDistribution = BasicTypes.UNASSIGNED_STR;
+    protected String operatingSystemVersion = BasicTypes.UNASSIGNED_STR;
     // Applications
     protected List<String> appSoftware = new LinkedList<String>();
 
     public SoftwareDescription(){
 
+    }
+
+    public SoftwareDescription(String osType, String osDistribution, String osVersion, List<String> appSoftware) {
+        this.operatingSystemType = osType;
+        this.operatingSystemDistribution = osDistribution;
+        this.operatingSystemVersion = osVersion;
+        this.appSoftware = appSoftware;
+    }
+
+    public String getOperatingSystemType() {
+        return operatingSystemType;
+    }
+
+    public void setOperatingSystemType(String osType) {
+        this.operatingSystemType = osType;
+    }
+
+    public String getOperatingSystemDistribution() {
+        return operatingSystemDistribution;
+    }
+
+    public void setOperatingSystemDistribution(String osDistribution) {
+        this.operatingSystemDistribution = osDistribution;
+    }
+
+    public String getOperatingSystemVersion() {
+        return operatingSystemVersion;
+    }
+
+    public void setOperatingSystemVersion(String osVersion) {
+        this.operatingSystemVersion = osVersion;
+    }
+
+    public List<String> getAppSoftware() {
+        return appSoftware;
+    }
+
+    public void setAppSoftware(List<String> appSoftware) {
+        this.appSoftware = appSoftware;
     }
 }

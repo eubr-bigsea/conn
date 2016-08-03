@@ -8,7 +8,7 @@ public class test {
     public static void main(String[] args) {
         System.out.println("Hello Testing API code!"); // Display the string.
 
-        Dummy d = new Dummy();
+        Dummy d = new Dummy(new HashMap<String, String>());
         HardwareDescription hd = new HardwareDescription();
         SoftwareDescription sd = new SoftwareDescription();
         HashMap<String, String> prop = new HashMap<String, String>();

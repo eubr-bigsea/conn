@@ -9,9 +9,9 @@ import java.util.HashMap;
 /**
  * Created by bscuser on 7/29/16.
  */
-public class Dummy implements Connector {
-    public Dummy(){
-
+public class Dummy extends Connector {
+    public Dummy(HashMap<String, String> prop){
+        super(prop);
     }
     public Integer create(HardwareDescription hd, SoftwareDescription sd, HashMap<String, String> prop){
         System.out.println("creating Vm");

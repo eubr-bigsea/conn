@@ -6,11 +6,12 @@ import es.bsc.conn.types.Vm;
 
 import java.util.HashMap;
 
-public interface Connector {
-    public Integer create(HardwareDescription hd, SoftwareDescription sd, HashMap<String, String> prop);
-    public Vm waitUntilCreation(Integer id);
-    public void destroy(Integer id);
-    public long getTimeSlot();
-    public float getPriceSlot();
-    public void close();
+public abstract class Connector {
+    public Connector(HashMap<String, String> prop) {}
+    public abstract Integer create(HardwareDescription hd, SoftwareDescription sd, HashMap<String, String> prop);
+    public abstract Vm waitUntilCreation(Integer id);
+    public abstract void destroy(Integer id);
+    public abstract long getTimeSlot();
+    public abstract float getPriceSlot();
+    public abstract void close();
 }
