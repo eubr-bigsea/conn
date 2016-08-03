@@ -13,15 +13,15 @@ public class Dummy extends Connector {
     public Dummy(HashMap<String, String> prop){
         super(prop);
     }
-    public Integer create(HardwareDescription hd, SoftwareDescription sd, HashMap<String, String> prop){
+    public Object create(HardwareDescription hd, SoftwareDescription sd, HashMap<String, String> prop){
         System.out.println("creating Vm");
         return 1;
     }
-    public Vm waitUntilCreation(Integer id){
+    public Vm waitUntilCreation(Object id){
         System.out.println("waiting Vm");
         return null;
     }
-    public void destroy(Integer id){
+    public void destroy(Object id){
         System.out.println("deleting Vm");
     }
     public long getTimeSlot(){

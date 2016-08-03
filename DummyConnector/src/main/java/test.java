@@ -12,7 +12,8 @@ public class test {
         HardwareDescription hd = new HardwareDescription();
         SoftwareDescription sd = new SoftwareDescription();
         HashMap<String, String> prop = new HashMap<String, String>();
-        Integer id = d.create(hd, sd, prop);
+        Object id = d.create(hd, sd, prop);
+        //Integer id = (Integer) d.create(hd, sd, prop);
         System.out.println("VM id: "+id);
         d.close();
 

@@ -8,6 +8,10 @@ public class SoftwareDescription {
     protected String operatingSystemType = BasicTypes.UNASSIGNED_STR;
     protected String operatingSystemDistribution = BasicTypes.UNASSIGNED_STR;
     protected String operatingSystemVersion = BasicTypes.UNASSIGNED_STR;
+
+    // Image
+    protected String imageName;
+
     // Applications
     protected List<String> appSoftware = new LinkedList<String>();
 
@@ -45,6 +49,10 @@ public class SoftwareDescription {
     public void setOperatingSystemVersion(String osVersion) {
         this.operatingSystemVersion = osVersion;
     }
+
+    public String getImageName() { return imageName; }
+
+    public void setImageName(String imageName) { this.imageName = imageName; }
 
     public List<String> getAppSoftware() {
         return appSoftware;
