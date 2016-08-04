@@ -28,6 +28,35 @@
                 <name>BSC</name>
                 <url>http://www.bsc.es</url>
         </organization>
+    <!-- PROPERTIES -->
+    <properties>
+        <build.version></build.version>
+
+        <junit.version>4.12</junit.version>
+        <log4j.version>2.6.1</log4j.version>
+
+        <!-- Maven Plugins -->
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven-compiler-plugin.version>3.5.1</maven-compiler-plugin.version>
+        <maven-shade-plugin.version>2.4.3</maven-shade-plugin.version>
+        <buildnumber-maven-plugin.version>1.4</buildnumber-maven-plugin.version>
+        <maven-jar-plugin.version>3.0.2</maven-jar-plugin.version>
+
+        <!-- Project encoding -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    </properties>
+
+    <!-- DEPENCENCIES -->
+    <dependencies>
+        <dependency>
+            <groupId>es.bsc</groupId>
+            <artifactId>compss-connectors-commons</artifactId>
+            <version>1.0</version>
+        </dependency>
+    </dependencies>
+
     <!-- BUILD-->
     <build>
         <finalName>${project.artifactId}</finalName>
@@ -40,34 +69,41 @@
                     <target>${maven.compiler.target}</target>
                 </configuration>
             </plugin>
-
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>${maven-shade-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <finalName>${project.artifactId}</finalName>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- Add revision to manifest -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>${maven-jar-plugin.version}</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>lib/</classpathPrefix>
+                            <mainClass>es.bsc.conn.dummy.test</mainClass>
+                        </manifest>
+                        <manifestEntries>
+                            <Implementation-Build>$\{buildNumber}</Implementation-Build>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
-<dependencies>
-    <dependency>
-        <groupId>es.bsc</groupId>
-        <artifactId>compss-connectors-commons</artifactId>
-        <version>1.0</version>
-    </dependency>
-</dependencies>
-    <properties>
-        <compss.version>1.4.rc05</compss.version>
-        <junit.version>4.12</junit.version>
-
-        <!-- Maven Plugins -->
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-        <maven-compiler-plugin.version>3.5.1</maven-compiler-plugin.version>
-        <maven-shade-plugin.version>2.4.3</maven-shade-plugin.version>
-        <maven-resources-plugin.version>3.0.1</maven-resources-plugin.version>
-        <maven-clean-plugin.version>3.0.0</maven-clean-plugin.version>
-        <maven-war-plugin.version>2.6</maven-war-plugin.version>
-        <tomcat7-maven-plugin.version>2.1</tomcat7-maven-plugin.version>
-        <maven-jaxb2-plugin.version>0.12.1</maven-jaxb2-plugin.version>
-
-        <!-- Project encoding -->
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    </properties>
-
 </project>
