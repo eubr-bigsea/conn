@@ -18,7 +18,7 @@ public class ROCCI extends Connector {
 
     private RocciClient client;
     private ArrayList<String> cmd_string;
-    private String attributes = "Not Defined";
+    private String attributes = "";
 
     private static Integer MAX_VM_CREATION_TIME = 10; 	// Minutes
     private static Integer MAX_ALLOWED_ERRORS = 3;		// Number of maximum errors
@@ -131,6 +131,7 @@ public class ROCCI extends Connector {
         if (props.get("owner") != null && props.get("jobname") != null) {
             attributes = props.get("owner") + "-" + props.get("jobname");
         }
+
         String time = props.get("time-slot");
         if (time != null) {
             timeSlot = Integer.parseInt(time)*1000;
@@ -142,7 +143,7 @@ public class ROCCI extends Connector {
     }
 
     @Override
-    public VirtualResource create(HardwareDescription hd, SoftwareDescription sd, HashMap<String, String> prop) throws ConnectorException {
+    public Object create(HardwareDescription hd, SoftwareDescription sd, HashMap<String, String> prop) throws ConnectorException {
         try {
             String instanceCode = sd.getImageType();
             String vmId = client.create_compute(sd.getImageName(), instanceCode);

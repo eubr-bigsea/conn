@@ -1,6 +1,8 @@
 package es.bsc.conn.dummy;
 
-import es.bsc.conn.dummy.Dummy;
+/*
+Test app for Dummy connector
+ */
 import es.bsc.conn.types.HardwareDescription;
 import es.bsc.conn.types.SoftwareDescription;
 

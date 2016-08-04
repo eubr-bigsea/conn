@@ -72,11 +72,11 @@
     <maven-shade-plugin.version>2.4.3</maven-shade-plugin.version>
     <maven-compiler-plugin.version>3.5.1</maven-compiler-plugin.version>
     <maven-jar-plugin.version>3.0.2</maven-jar-plugin.version>
-    <maven.compiler.target>1.8</maven.compiler.target>
+    <maven.compiler.target>1.7</maven.compiler.target>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <log4j.version>2.6.1</log4j.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.source>1.7</maven.compiler.source>
   </properties>
 </project>
 
