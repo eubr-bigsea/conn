@@ -3,7 +3,9 @@ import es.bsc.conn.Connector;
 import es.bsc.conn.exceptions.ConnectorException;
 import es.bsc.conn.types.HardwareDescription;
 import es.bsc.conn.types.SoftwareDescription;
-import es.bsc.conn.types.Vm;
+import es.bsc.conn.types.VirtualResource;
+
+// TODO: add logger
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -103,9 +105,6 @@ public class ROCCI extends Connector {
             cmd_string.add("--log-to " + props.get("log-to"));
         }
 
-        /*if (props.get("output-format") != null) {
-            cmd_string.add("--output-format " + props.get("output-format"));
-        }*/
         cmd_string.add("--output-format json_extended_pretty");
 
         if (props.get("dump-model") != null) {
@@ -119,7 +118,6 @@ public class ROCCI extends Connector {
         if (props.get("verbose") != null) {
             cmd_string.add("--verbose");
         }
-        //TODO: add context
 
         // ROCCI connector parameters setup
         if (props.get("max-vm-creation-time") != null) {
@@ -144,34 +142,36 @@ public class ROCCI extends Connector {
     }
 
     @Override
-    public Object create(HardwareDescription hd, SoftwareDescription sd, HashMap<String, String> prop) throws ConnectorException {
+    public VirtualResource create(HardwareDescription hd, SoftwareDescription sd, HashMap<String, String> prop) throws ConnectorException {
         try {
-            String instanceCode = "0"; //rd.getType(); //TODO: getType
+            String instanceCode = sd.getImageType();
             String vmId = client.create_compute(sd.getImageName(), instanceCode);
+            VirtualResource vr = new VirtualResource(vmId, hd, sd, prop);
             /*if (debug) {
                 logger.debug("VM "+vmId+ " Created");
             }*/
-            return vmId;
+            return vr;
         } catch (Exception e){
             //logger.error("Error creating a VM", e);
+            System.out.println("Error creating a VM");
             throw new ConnectorException(e);
         }
 
     }
 
     @Override
-    public Vm waitUntilCreation(Object id) throws ConnectorException {
-        String vmId = id.toString();
+    public VirtualResource waitUntilCreation(VirtualResource vr) throws ConnectorException {
+        String vmId = vr.getId().toString();
         //logger.info("Waiting until VM "+ vmId +" is created");
-        Vm vm = new Vm();
-
-        Integer polls = 0; //?
+        System.out.println("Waiting until VM "+ vmId +" is created");
+        Integer polls = 0;
         int errors = 0;
 
         String status = null;
         status = client.get_resource_status(vmId);
 
         try {
+            polls++;
             Thread.sleep(RETRY_TIME * 1000);
             if (RETRY_TIME  * polls >= MAX_VM_CREATION_TIME * 60) {
                 //logger.error("Maximum VM waiting for creation time reached.");
@@ -183,28 +183,20 @@ public class ROCCI extends Connector {
             errors++;
             if (errors == MAX_ALLOWED_ERRORS){
                 //logger.error("ERROR_MSG = [\n\tError = " + e.getMessage() + "\n]");
+                System.out.println("ERROR_MSG = [\n\tError = " + e.getMessage() + "\n]");
                 throw new ConnectorException("Error getting the status of the request");
             }
         }
         String ip = client.get_resource_address(vmId);
-        vm.setId(vmId);
-        vm.setIp(ip);
-        //vm.setHd(hd); //No tiene acceso?
-        //vm.setSd(sd); //No tiene acceso?
-        vm.getSd().setOperatingSystemType("Linux");
-        /* En el connector de Compss
-        granted = requested.copy();
-        granted.setName(IP);
-        granted.setOperatingSystemType("Linux");
-        granted.setValue(getMachineCostPerTimeSlot(granted));*/
-
-        return vm;
+        vr.setIp(ip);
+        return vr;
     }
 
     @Override
     public void destroy(Object id) {
         String vmId = (String) id;
         //logger.info(" Destroy VM "+vmId+" with rOCCI connector");
+        System.out.println(" Destroy VM "+vmId+" with rOCCI connector");
         client.delete_compute(vmId);
     }
 
@@ -214,9 +206,8 @@ public class ROCCI extends Connector {
     }
 
     @Override
-    public float getPriceSlot() {
-        //TODO: priceSlot
-        return 0;
+    public float getPriceSlot(VirtualResource virtualResource) {
+        return virtualResource.getHd().getPricePerUnit();
     }
 
     @Override

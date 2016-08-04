@@ -2,28 +2,30 @@ package es.bsc.conn.types;
 
 import java.util.HashMap;
 
-public class Vm {
+public class VirtualResource {
     private String ip;
     private Object id;
     private HardwareDescription hd;
     private SoftwareDescription sd;
     private HashMap<String, String> properties;
 
-    public Vm(){
-
+    public VirtualResource(){
+        this.id = "-1";
+        this.ip = "0.0.0.0";
+        this.hd = null;
+        this.sd = null;
+        this.properties = null;
     }
 
-    public Vm(String ip, Object id, HardwareDescription hd, SoftwareDescription sd, HashMap<String, String> properties) {
-        this.ip = ip;
+    public VirtualResource(Object id, HardwareDescription hd, SoftwareDescription sd, HashMap<String, String> prop) {
         this.id = id;
+        this.ip = "-1.-1.-1.-1";
         this.hd = hd;
         this.sd = sd;
-        this.properties = properties;
+        this.properties = prop;
     }
 
-    public String getIp() {
-        return ip;
-    }
+    public String getIp() { return ip; }
 
     public void setIp(String ip) {
         this.ip = ip;

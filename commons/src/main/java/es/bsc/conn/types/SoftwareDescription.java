@@ -1,5 +1,6 @@
 package es.bsc.conn.types;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -11,6 +12,8 @@ public class SoftwareDescription {
 
     // Image
     protected String imageName;
+    protected String imageType;
+    protected HashMap<String, String> imageProperties;
 
     // Applications
     protected List<String> appSoftware = new LinkedList<String>();
@@ -53,6 +56,14 @@ public class SoftwareDescription {
     public String getImageName() { return imageName; }
 
     public void setImageName(String imageName) { this.imageName = imageName; }
+
+    public String getImageType() { return imageType; }
+
+    public void setImageType(String imageType) { this.imageType = imageType; }
+
+    public HashMap<String, String> getImageProperties() { return imageProperties; }
+
+    public void setImageProperties(HashMap<String, String> imageProperties) { this.imageProperties = imageProperties; }
 
     public List<String> getAppSoftware() {
         return appSoftware;

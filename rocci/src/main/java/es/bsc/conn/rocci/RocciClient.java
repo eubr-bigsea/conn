@@ -7,6 +7,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
+
 // TODO: add logger
 //import org.apache.logging.log4j.Logger;
 
@@ -35,6 +36,7 @@ public class RocciClient {
             res_desc = execute_cmd(cmd);
         } catch (InterruptedException e) {
             //LOGGER.error(e);
+            System.out.println(e);
         }
         return res_desc;
     }
@@ -75,12 +77,12 @@ public class RocciClient {
         String cmd = cmd_line + "--action delete" + " --resource " + resource_id;
         try {
             execute_cmd(cmd);
-        } catch (ConnectorException e) {
+        } catch (ConnectorException | InterruptedException e) {
             //LOGGER.error(e);
-        } catch (InterruptedException e) {
-            //LOGGER.error(e);
+            System.out.println(e);
         } catch (Exception e) {
             //LOGGER.error(e);
+            System.out.println(e);
         }
     }
     public String create_compute(String os_tpl, String resource_tpl) {
@@ -91,10 +93,9 @@ public class RocciClient {
 
         try {
             s = execute_cmd(cmd);
-        } catch (ConnectorException e) {
+        } catch (ConnectorException | InterruptedException e) {
             //LOGGER.error(e);
-        } catch (InterruptedException e) {
-            //LOGGER.error(e);
+            System.out.println(e);
         }
 
         return s;
