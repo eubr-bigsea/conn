@@ -13,19 +13,29 @@ public class SoftwareDescription {
     // Image
     protected String imageName;
     protected String imageType;
-    protected HashMap<String, String> imageProperties;
+    protected HashMap<String, String> imageProperties = new HashMap<>();
 
     // Applications
     protected List<String> appSoftware = new LinkedList<String>();
 
     public SoftwareDescription(){
+        this.operatingSystemType = "";
+        this.operatingSystemDistribution = "";
+        this.operatingSystemVersion = "";
 
+        this.imageName = "";
+        this.imageType = "";
     }
 
-    public SoftwareDescription(String osType, String osDistribution, String osVersion, List<String> appSoftware) {
-        this.operatingSystemType = osType;
-        this.operatingSystemDistribution = osDistribution;
-        this.operatingSystemVersion = osVersion;
+    public SoftwareDescription(String operatingSystemType, String operatingSystemDistribution,
+                               String operatingSystemVersion, String imageName, String imageType,
+                               HashMap<String, String> imageProperties, List<String> appSoftware) {
+        this.operatingSystemType = operatingSystemType;
+        this.operatingSystemDistribution = operatingSystemDistribution;
+        this.operatingSystemVersion = operatingSystemVersion;
+        this.imageName = imageName;
+        this.imageType = imageType;
+        this.imageProperties = imageProperties;
         this.appSoftware = appSoftware;
     }
 

@@ -35,9 +35,9 @@
         <modules>
                 <module>commons</module>
                 <module>DummyConnector</module>
+                <module>rocci</module>
                 <!--<module>amazon</module>
                 <module>one</module>
-                <module>rocci</module>
                 <module>vmm</module>
                 <module>jclouds</module> -->
         </modules>

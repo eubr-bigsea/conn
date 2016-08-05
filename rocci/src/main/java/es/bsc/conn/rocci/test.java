@@ -22,12 +22,14 @@ public class test {
                      --resource compute
                      --attribute occi.core.title="VmwithUserCI"
                      -M os_tpl#uuid_pmestestingocci_68
-                     -M resource_tpl#small */
+                     -M resource_tpl#small
+                     --context user_data="file://$PWD/tmpfedcloud.login"*/
 
         HardwareDescription hd = new HardwareDescription();
         SoftwareDescription sd = new SoftwareDescription();
         sd.setImageName("uuid_pmestestingocci_68");
         sd.setImageType("small");
+
         HashMap<String, String> prop = new HashMap<>();
         prop.put("Server", "https://rocci-server.bsc.es:11443");
         prop.put("auth", "x509");
@@ -36,13 +38,15 @@ public class test {
         prop.put("user-cred", "~/certs/test/scorella_test.pem");
         prop.put("owner", "scorella");
         prop.put("jobname", "test");
+        prop.put("context", "user_data=\"file://$PWD/tmpfedcloud.login\"");
+
         ROCCI r = new ROCCI(prop);
 
         VirtualResource vr = (VirtualResource) r.create(hd, sd, prop);
         System.out.println("VM id: "+vr.getId());
         vr = r.waitUntilCreation(vr);
         System.out.println("VM ip: "+vr.getIp());
-        r.destroy(vr.getId());
+        //r.destroy(vr.getId());
         r.close();
 
     }}
