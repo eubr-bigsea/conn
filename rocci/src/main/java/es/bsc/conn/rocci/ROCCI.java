@@ -172,20 +172,28 @@ public class ROCCI extends Connector {
         status = client.get_resource_status(vmId);
 
         try {
-            polls++;
             Thread.sleep(RETRY_TIME * 1000);
-            if (RETRY_TIME  * polls >= MAX_VM_CREATION_TIME * 60) {
-                //logger.error("Maximum VM waiting for creation time reached.");
-                throw new ConnectorException("Maximum VM creation time reached.");
-            }
-            status = client.get_resource_status(vmId);
-            errors = 0;
-        } catch (Exception e){
-            errors++;
-            if (errors == MAX_ALLOWED_ERRORS){
-                //logger.error("ERROR_MSG = [\n\tError = " + e.getMessage() + "\n]");
-                System.out.println("ERROR_MSG = [\n\tError = " + e.getMessage() + "\n]");
-                throw new ConnectorException("Error getting the status of the request");
+        } catch (InterruptedException e1) {
+            //logger.warn("Sleep Interrumped", e1);
+        }
+
+        while (!status.equals("active")) {
+            try {
+                polls++;
+                Thread.sleep(RETRY_TIME * 1000);
+                if (RETRY_TIME * polls >= MAX_VM_CREATION_TIME * 60) {
+                    //logger.error("Maximum VM waiting for creation time reached.");
+                    throw new ConnectorException("Maximum VM creation time reached.");
+                }
+                status = client.get_resource_status(vmId);
+                errors = 0;
+            } catch (Exception e) {
+                errors++;
+                if (errors == MAX_ALLOWED_ERRORS) {
+                    //logger.error("ERROR_MSG = [\n\tError = " + e.getMessage() + "\n]");
+                    System.out.println("ERROR_MSG = [\n\tError = " + e.getMessage() + "\n]");
+                    throw new ConnectorException("Error getting the status of the request");
+                }
             }
         }
         String ip = client.get_resource_address(vmId);
