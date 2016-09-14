@@ -145,8 +145,8 @@ public class ROCCI extends Connector {
     @Override
     public Object create(HardwareDescription hd, SoftwareDescription sd, HashMap<String, String> prop) throws ConnectorException {
         try {
-            String instanceCode = sd.getImageType();
-            String vmId = client.create_compute(sd.getImageName(), instanceCode);
+            String instanceCode = hd.getImageType();
+            String vmId = client.create_compute(hd.getImageName(), instanceCode);
             VirtualResource vr = new VirtualResource(vmId, hd, sd, prop);
             /*if (debug) {
                 logger.debug("VM "+vmId+ " Created");
@@ -161,8 +161,9 @@ public class ROCCI extends Connector {
     }
 
     @Override
-    public VirtualResource waitUntilCreation(VirtualResource vr) throws ConnectorException {
-        String vmId = vr.getId().toString();
+    public VirtualResource waitUntilCreation(Object id) throws ConnectorException {
+        //String vmId = vr.getId().toString();
+        String vmId = (String) id;
         //logger.info("Waiting until VM "+ vmId +" is created");
         System.out.println("Waiting until VM "+ vmId +" is created");
         Integer polls = 0;
@@ -197,6 +198,10 @@ public class ROCCI extends Connector {
             }
         }
         String ip = client.get_resource_address(vmId);
+
+        //Create Virtual Resource
+        VirtualResource vr = new VirtualResource();
+        vr.setId(vmId);
         vr.setIp(ip);
         return vr;
     }

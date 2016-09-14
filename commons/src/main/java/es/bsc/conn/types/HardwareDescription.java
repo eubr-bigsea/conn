@@ -1,4 +1,5 @@
 package es.bsc.conn.types;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -12,6 +13,7 @@ public class HardwareDescription {
     // Memory
     protected float memorySize = BasicTypes.UNASSIGNED_FLOAT;
     protected String memoryType = BasicTypes.UNASSIGNED_STR;
+
     // Storage
     protected float storageSize = BasicTypes.UNASSIGNED_FLOAT;
     protected String storageType = BasicTypes.UNASSIGNED_STR;
@@ -20,19 +22,29 @@ public class HardwareDescription {
     protected int priceTimeUnit = BasicTypes.UNASSIGNED_INT;
     protected float pricePerUnit = BasicTypes.UNASSIGNED_FLOAT;
 
+    // Image
+    protected String imageName;
+    protected String imageType;
+    protected HashMap<String, String> imageProperties = new HashMap<>();
+
     public HardwareDescription(){
 
     }
 
-    public HardwareDescription(List<Processor> proc, int tCU, float memS, String memT, float strS, String strT, int pTU, float pPU) {
-        this.processors = proc;
-        this.totalComputingUnits = tCU;
-        this.memorySize = memS;
-        this.memoryType = memT;
-        this.storageSize = strS;
-        this.storageType = strT;
-        this.priceTimeUnit = pTU;
-        this.pricePerUnit = pPU;
+    public HardwareDescription(List<Processor> processors, int totalComputingUnits, float memorySize, String memoryType,
+                               float storageSize, String storageType, int priceTimeUnit, float pricePerUnit,
+                               String imageName, String imageType, HashMap<String, String> imageProperties) {
+        this.processors = processors;
+        this.totalComputingUnits = totalComputingUnits;
+        this.memorySize = memorySize;
+        this.memoryType = memoryType;
+        this.storageSize = storageSize;
+        this.storageType = storageType;
+        this.priceTimeUnit = priceTimeUnit;
+        this.pricePerUnit = pricePerUnit;
+        this.imageName = imageName;
+        this.imageType = imageType;
+        this.imageProperties = imageProperties;
     }
 
     public List<Processor> getProcessors() { return processors; }
@@ -66,4 +78,18 @@ public class HardwareDescription {
     public float getPricePerUnit() { return pricePerUnit; }
 
     public void setPricePerUnit(float pPU) { this.pricePerUnit = pPU; }
+
+    public String getImageName() {
+        return imageName;
+    }
+
+    public void setImageName(String imageName) { this.imageName = imageName; }
+
+    public String getImageType() { return imageType; }
+
+    public void setImageType(String imageType) { this.imageType = imageType; }
+
+    public HashMap<String, String> getImageProperties() { return imageProperties; }
+
+    public void setImageProperties(HashMap<String, String> imageProperties) { this.imageProperties = imageProperties; }
 }

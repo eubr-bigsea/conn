@@ -27,8 +27,8 @@ public class test {
 
         HardwareDescription hd = new HardwareDescription();
         SoftwareDescription sd = new SoftwareDescription();
-        sd.setImageName("uuid_pmestestingocci_68");
-        sd.setImageType("small");
+        hd.setImageName("uuid_pmestestingocci_68");
+        hd.setImageType("small");
 
         HashMap<String, String> prop = new HashMap<>();
         prop.put("Server", "https://rocci-server.bsc.es:11443");
@@ -42,11 +42,18 @@ public class test {
 
         ROCCI r = new ROCCI(prop);
 
-        VirtualResource vr = (VirtualResource) r.create(hd, sd, prop);
-        System.out.println("VM id: "+vr.getId());
-        vr = r.waitUntilCreation(vr);
-        System.out.println("VM ip: "+vr.getIp());
+        //VirtualResource vr = (VirtualResource) r.create(hd, sd, prop);
+        //System.out.println("VM id: "+vr.getId());
+        //vr = r.waitUntilCreation(vr);
+        //System.out.println("VM ip: "+vr.getIp());
         //r.destroy(vr.getId());
+
+        String id = (String) r.create(hd, sd, prop);
+        System.out.println("VM id: "+id);
+        VirtualResource vr = r.waitUntilCreation(id);
+        System.out.println("VM ip: "+vr.getIp());
+        r.destroy(vr.getId());
+
         r.close();
 
     }}

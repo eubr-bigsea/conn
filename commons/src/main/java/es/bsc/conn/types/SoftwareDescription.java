@@ -11,9 +11,9 @@ public class SoftwareDescription {
     protected String operatingSystemVersion = BasicTypes.UNASSIGNED_STR;
 
     // Image
-    protected String imageName;
-    protected String imageType;
-    protected HashMap<String, String> imageProperties = new HashMap<>();
+    //protected String imageName;
+    //protected String imageType;
+    //protected HashMap<String, String> imageProperties = new HashMap<>();
 
     // Applications
     protected List<String> appSoftware = new LinkedList<String>();
@@ -23,8 +23,8 @@ public class SoftwareDescription {
         this.operatingSystemDistribution = "";
         this.operatingSystemVersion = "";
 
-        this.imageName = "";
-        this.imageType = "";
+        //this.imageName = "";
+        //this.imageType = "";
     }
 
     public SoftwareDescription(String operatingSystemType, String operatingSystemDistribution,
@@ -33,9 +33,9 @@ public class SoftwareDescription {
         this.operatingSystemType = operatingSystemType;
         this.operatingSystemDistribution = operatingSystemDistribution;
         this.operatingSystemVersion = operatingSystemVersion;
-        this.imageName = imageName;
-        this.imageType = imageType;
-        this.imageProperties = imageProperties;
+        //this.imageName = imageName;
+        //this.imageType = imageType;
+        //this.imageProperties = imageProperties;
         this.appSoftware = appSoftware;
     }
 
@@ -63,7 +63,7 @@ public class SoftwareDescription {
         this.operatingSystemVersion = osVersion;
     }
 
-    public String getImageName() { return imageName; }
+    /*public String getImageName() { return imageName; }
 
     public void setImageName(String imageName) { this.imageName = imageName; }
 
@@ -73,7 +73,7 @@ public class SoftwareDescription {
 
     public HashMap<String, String> getImageProperties() { return imageProperties; }
 
-    public void setImageProperties(HashMap<String, String> imageProperties) { this.imageProperties = imageProperties; }
+    public void setImageProperties(HashMap<String, String> imageProperties) { this.imageProperties = imageProperties; }*/
 
     public List<String> getAppSoftware() {
         return appSoftware;
