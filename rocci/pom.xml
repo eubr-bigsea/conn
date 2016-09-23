@@ -5,6 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <!-- GENERAL INFORMATION -->
+    <groupId>es.bsc.conn</groupId>
     <artifactId>compss-connectors-rocci</artifactId>
     <packaging>jar</packaging>
     <parent>

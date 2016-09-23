@@ -5,6 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <!-- GENERAL INFORMATION -->
         <artifactId>compss-connectors-commons</artifactId>
+        <groupId>es.bsc.conn</groupId>
         <packaging>jar</packaging>
         <parent>
                 <groupId>es.bsc</groupId>
