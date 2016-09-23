@@ -51,8 +51,8 @@
     <!-- DEPENCENCIES -->
     <dependencies>
         <dependency>
-            <groupId>es.bsc</groupId>
-            <artifactId>compss-connectors-commons</artifactId>
+            <groupId>es.bsc.conn</groupId>
+            <artifactId>connectors-commons</artifactId>
             <version>1.0</version>
         </dependency>
     </dependencies>

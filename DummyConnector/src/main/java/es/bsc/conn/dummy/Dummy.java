@@ -1,5 +1,6 @@
 package es.bsc.conn.dummy;
 import es.bsc.conn.Connector;
+import es.bsc.conn.exceptions.ConnectorException;
 import es.bsc.conn.types.HardwareDescription;
 import es.bsc.conn.types.SoftwareDescription;
 import es.bsc.conn.types.VirtualResource;
@@ -17,10 +18,6 @@ public class Dummy extends Connector {
         System.out.println("creating VirtualResource");
         return new VirtualResource();
     }
-    public VirtualResource waitUntilCreation(VirtualResource vr){
-        System.out.println("waiting VirtualResource");
-        return vr;
-    }
     public void destroy(Object id){
         System.out.println("deleting VirtualResource");
     }
@@ -35,4 +32,12 @@ public class Dummy extends Connector {
     public void close(){
         System.out.println("closing");
     }
+	@Override
+	public VirtualResource waitUntilCreation(Object id)
+			throws ConnectorException {
+		VirtualResource vr = (VirtualResource)id;
+		System.out.println("waiting VirtualResource");
+        return vr;
+		
+	}
 }

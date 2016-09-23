@@ -6,9 +6,10 @@
     <version>1.0</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>compss-connectors-rocci</artifactId>
-  <name>COMPSs Connectors ROCCI</name>
-  <description>COMPSs Connectors</description>
+  <groupId>es.bsc.conn</groupId>
+  <artifactId>connectors-rocci</artifactId>
+  <name>ROCCI Connector</name>
+  <description>ROCCI Connectors</description>
   <url>http://www.bsc.es</url>
   <inceptionYear>2016</inceptionYear>
   <licenses>

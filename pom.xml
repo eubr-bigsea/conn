@@ -24,6 +24,46 @@
                 <name>BSC</name>
                 <url>http://www.bsc.es</url>
         </organization>
+	<!-- REPOSITORIES -->
+    <repositories>
+            <repository>
+                    <snapshots>
+                            <enabled>false</enabled>
+                    </snapshots>
+                    <id>central</id>
+                    <name>Central Repository</name>
+                    <url>http://repo1.maven.apache.org/maven2</url>
+            </repository>
+            <repository>
+                    <id>grid-repo</id>
+                    <name>BSC Grid computing and Clusters group</name>
+                    <url>http://compss.bsc.es/artifactory/grid-devel-repo</url>
+            </repository>
+    </repositories>
+
+    <pluginRepositories>
+            <pluginRepository>
+                    <releases>
+                            <updatePolicy>never</updatePolicy>
+                    </releases>
+                    <snapshots>
+                            <enabled>false</enabled>
+                    </snapshots>
+                    <id>central</id>
+                    <name>Central Repository</name>
+                    <url>http://repo1.maven.apache.org/maven2</url>
+            </pluginRepository>
+    </pluginRepositories>
+
+    <!-- DISTRIBUTION MANAGEMENT -->
+    <distributionManagement>
+            <repository>
+                    <id>grid-repo</id>
+                    <name>BSC Grid computing and Clusters group</name>
+                    <url>http://compss.bsc.es/artifactory/grid-devel-repo</url>
+            </repository>
+    </distributionManagement>
+
 
         <!-- DEPENDENCIES -->
         <!-- <dependencyManagement>
@@ -40,5 +80,6 @@
                 <module>one</module>
                 <module>vmm</module>
                 <module>jclouds</module> -->
+		<module>all-connectors</module>
         </modules>
 </project>

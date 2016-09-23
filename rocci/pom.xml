@@ -6,7 +6,7 @@
 
     <!-- GENERAL INFORMATION -->
     <groupId>es.bsc.conn</groupId>
-    <artifactId>compss-connectors-rocci</artifactId>
+    <artifactId>connectors-rocci</artifactId>
     <packaging>jar</packaging>
     <parent>
         <artifactId>conn</artifactId>
@@ -16,8 +16,8 @@
 
 
     <!-- PROJECT INFORMATION -->
-    <name>COMPSs Connectors ROCCI</name>
-    <description>COMPSs Connectors</description>
+    <name>ROCCI Connector</name>
+    <description>ROCCI Connectors</description>
     <url>http://www.bsc.es</url>
     <inceptionYear>2016</inceptionYear>
     <licenses>
@@ -53,9 +53,9 @@
     <!-- DEPENCENCIES -->
     <dependencies>
         <dependency>
-            <groupId>es.bsc</groupId>
-            <artifactId>compss-connectors-commons</artifactId>
-            <version>1.0</version>
+            <groupId>es.bsc.conn</groupId>
+            <artifactId>connectors-commons</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.google.code.gson</groupId>
