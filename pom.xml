@@ -5,7 +5,7 @@
         <!-- GENERAL INFORMATION -->
         <groupId>es.bsc</groupId>
         <artifactId>conn</artifactId>
-        <version>1.0</version>
+        <version>1.0${build.version}</version>
         <packaging>pom</packaging>
 
 
@@ -63,7 +63,26 @@
                     <url>http://compss.bsc.es/artifactory/grid-devel-repo</url>
             </repository>
     </distributionManagement>
+    
+     <!-- PROPERTIES -->
+    <properties>
+        <build.version></build.version>
 
+        <junit.version>4.12</junit.version>
+        <log4j.version>2.6.1</log4j.version>
+
+        <!-- Maven Plugins -->
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven-compiler-plugin.version>3.5.1</maven-compiler-plugin.version>
+        <maven-shade-plugin.version>2.4.3</maven-shade-plugin.version>
+        <buildnumber-maven-plugin.version>1.4</buildnumber-maven-plugin.version>
+        <maven-jar-plugin.version>3.0.2</maven-jar-plugin.version>
+
+        <!-- Project encoding -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    </properties>
 
         <!-- DEPENDENCIES -->
         <!-- <dependencyManagement>

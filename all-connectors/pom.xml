@@ -4,11 +4,12 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <!-- GENERAL INFORMATION -->
+	<groupId>es.bsc.conn</groupId>
         <artifactId>all-connectors</artifactId>
         <parent>
                 <groupId>es.bsc</groupId>
                 <artifactId>conn</artifactId>
-                <version>1.0</version>
+                <version>1.0${build.version}</version>
                 <relativePath>..</relativePath>
         </parent>
 
