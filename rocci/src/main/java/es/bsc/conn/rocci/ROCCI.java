@@ -162,7 +162,8 @@ public class ROCCI extends Connector {
 
     @Override
     public VirtualResource waitUntilCreation(Object id) throws ConnectorException {
-        //String vmId = vr.getId().toString();
+       // String vmId = vr.getId().toString();
+        System.out.println(id);
         String vmId = (String) id;
         //logger.info("Waiting until VM "+ vmId +" is created");
         System.out.println("Waiting until VM "+ vmId +" is created");

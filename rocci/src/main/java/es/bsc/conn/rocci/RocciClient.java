@@ -6,6 +6,7 @@ import es.bsc.conn.rocci.types.json.JSONResources;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 import java.util.List;
 
 // TODO: add logger
@@ -93,6 +94,7 @@ public class RocciClient {
 
         try {
             s = execute_cmd(cmd);
+            System.out.println(s);
         } catch (ConnectorException | InterruptedException e) {
             //LOGGER.error(e);
             System.out.println(e);
@@ -106,19 +108,35 @@ public class RocciClient {
         String buff = null;
 
         String [] cmd_line = {"/bin/bash", "-c", "occi " + cmd_args};
+
         try {
+            System.out.println(Arrays.toString(cmd_line));
             Process p = Runtime.getRuntime().exec(cmd_line);
+
+            BufferedReader stdInput1 = new BufferedReader(new
+                    InputStreamReader(p.getInputStream()));
+
+            BufferedReader stdError1 = new BufferedReader(new
+                    InputStreamReader(p.getErrorStream()));
+
+            // read the output from the command
+            System.out.println("Here is the standard output of the command:\n");
+            String s1 = null;
+            while ((s1 = stdInput1.readLine()) != null) {
+                System.out.println(s1);
+                return_string += s1;
+            }
+
+            // read any errors from the attempted command
+            System.out.println("Here is the standard error of the command (if any):\n");
+            while ((s1 = stdError1.readLine()) != null) {
+                System.out.println(s1);
+            }
+
             p.waitFor();
-            if (p.exitValue() != 0){
-                throw new ConnectorException("Error executing command: \n occi "+cmd_args );
-            }
-            BufferedReader is = new BufferedReader(new InputStreamReader(p.getInputStream()));
-            while((buff = is.readLine())!=null) {
-                return_string += buff;
-            }
-
+            System.out.println("Exit value: " + p.exitValue());
+            System.out.println("__________________________________________");
             return return_string;
-
         } catch (IOException e) {
             throw new ConnectorException(e);
         }
