@@ -1,38 +1,40 @@
 package es.bsc.conn.mesos;
 
-import com.google.protobuf.ByteString;
-
 import es.bsc.conn.Connector;
 import es.bsc.conn.exceptions.ConnectorException;
 import es.bsc.conn.types.HardwareDescription;
 import es.bsc.conn.types.SoftwareDescription;
 import es.bsc.conn.types.VirtualResource;
-
 import es.bsc.mesos.framework.MesosFramework;
-
-
+import es.bsc.mesos.framework.exceptions.FrameworkException;
 import java.util.HashMap;
 import java.util.LinkedList;
-
+import java.util.List;
+import java.util.Map;
 import org.apache.mesos.Protos.Resource;
 import org.apache.mesos.Protos.Value;
-
 
 public class Mesos extends Connector {
 
     private static final long DEFAULT_TIME_SLOT = 300_000L;
+    private static final double GIGAS_TO_MEGAS = 1024.0;
+    private static final String UNDEFINED_IP = "-1.-1.-1.-1";
 
     private long timeSlot = DEFAULT_TIME_SLOT;
 
-    private static MesosFramework framework;
+    private final MesosFramework framework;
 
-    private HashMap<String, String> properties;
+    private final Map<String, VirtualResource> resources;
 
 
-    public Mesos(HashMap<String, String> props) throws Exception {
+    public Mesos(HashMap<String, String> props) throws ConnectorException {
         super(props);
-        properties = props;
-        framework = new MesosFramework(props);
+        resources = new HashMap<String, VirtualResource>();
+        try {
+            framework = new MesosFramework(props);
+        } catch(FrameworkException fe) {
+            throw new ConnectorException(fe);
+        }
     }
 
     private Value.Scalar buildScalar(double value) {
@@ -46,18 +48,28 @@ public class Mesos extends Connector {
 
     @Override
     public Object create(HardwareDescription hd, SoftwareDescription sd, HashMap<String, String> prop) throws ConnectorException {
-        LinkedList<Resource> res = new LinkedList<Resource>();
+        List<Resource> res = new LinkedList<Resource>();
         res.add(buildResource("cpus", hd.getTotalComputingUnits()));
-        res.add(buildResource("mem", hd.getMemorySize()));
-        res.add(buildResource("disk", hd.getStorageSize()));
+        res.add(buildResource("mem", GIGAS_TO_MEGAS*hd.getMemorySize()));
+        res.add(buildResource("disk", GIGAS_TO_MEGAS*hd.getStorageSize()));
 
-        return framework.requestWorker(res);
+        String newId = (String) framework.requestWorker(res);
+        resources.put(newId, new VirtualResource((String) newId, hd, sd, prop));
+
+        return newId;
     }
 
     @Override
     public VirtualResource waitUntilCreation(Object id) throws ConnectorException {
-        VirtualResource vr = (VirtualResource)id;
-        String ip = framework.waitWorkerUntilRunning((String) vr.getId());
+        String identifier = (String) id;
+        if (!resources.containsKey(identifier)) {
+            throw new ConnectorException("This identifier does not exist " + identifier);
+        }
+        VirtualResource vr = resources.get(identifier);
+        String ip = framework.waitWorkerUntilRunning(identifier);
+        if (UNDEFINED_IP.equals(ip)) {
+            throw new ConnectorException("Could not wait until creation of worker " + id);
+        }
         vr.setIp(ip);
         return vr;
     }
@@ -77,7 +89,9 @@ public class Mesos extends Connector {
 
     @Override
     public void destroy(Object id) {
-        framework.removeWorker((String) id);
+        String identifier = (String) id;
+        resources.remove(identifier);
+        framework.removeWorker(identifier);
     }
 
     @Override
