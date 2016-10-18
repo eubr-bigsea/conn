@@ -43,7 +43,7 @@
         <dependency>
             <groupId>es.bsc</groupId>
             <artifactId>mesos-framework</artifactId>
-            <version>0.0-3</version>
+            <version>0.0-6</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
