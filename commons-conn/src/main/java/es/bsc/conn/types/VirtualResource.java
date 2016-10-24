@@ -4,6 +4,10 @@ import java.util.HashMap;
 
 
 public class VirtualResource {
+    
+    private static final String DEFAULT_ID = "-1";
+    private static final String DEFAULT_IP = "0.0.0.0";
+    private static final String INVALID_IP = "-1.-1.-1.-1";
 
     private String ip;
     private Object id;
@@ -13,8 +17,8 @@ public class VirtualResource {
 
 
     public VirtualResource() {
-        this.id = "-1";
-        this.ip = "0.0.0.0";
+        this.id = DEFAULT_ID;
+        this.ip = DEFAULT_IP;
         this.hd = null;
         this.sd = null;
         this.properties = null;
@@ -22,7 +26,7 @@ public class VirtualResource {
 
     public VirtualResource(Object id, HardwareDescription hd, SoftwareDescription sd, HashMap<String, String> prop) {
         this.id = id;
-        this.ip = "-1.-1.-1.-1";
+        this.ip = INVALID_IP;
         this.hd = hd;
         this.sd = sd;
         this.properties = prop;

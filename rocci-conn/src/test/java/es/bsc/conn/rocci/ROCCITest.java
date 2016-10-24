@@ -49,9 +49,9 @@ public class ROCCITest {
         ROCCI r = new ROCCI(prop);
 
         // VirtualResource vr = (VirtualResource) r.create(hd, sd, prop);
-        // System.out.println("VM id: "+vr.getId());
+        // LOGGER.info("VM id: "+vr.getId());
         // vr = r.waitUntilCreation(vr);
-        // System.out.println("VM ip: "+vr.getIp());
+        // LOGGER.info("VM ip: "+vr.getIp());
         // r.destroy(vr.getId());
 
         String id = (String) r.create(hd, sd, prop);
