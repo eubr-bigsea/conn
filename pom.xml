@@ -6,7 +6,7 @@
 	<!-- GENERAL INFORMATION -->
 	<groupId>es.bsc</groupId>
 	<artifactId>conn</artifactId>
-	<version>1.0-1</version>
+	<version>1.0</version>
 	<packaging>pom</packaging>
 
 	<!-- PROJECT INFORMATION -->
@@ -28,7 +28,7 @@
 	<!-- PROPERTIES -->
 	<properties>
 		<!-- CONN CLIENTS VERSION -->
-		<conn-clients.version>1.0-6</conn-clients.version>
+		<conn-clients.version>1.0-1</conn-clients.version>
 
 		<!-- JUnit version -->
 		<junit.version>4.12</junit.version>
