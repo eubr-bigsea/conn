@@ -159,16 +159,12 @@ public class ROCCI extends Connector {
     public Object create(HardwareDescription hd, SoftwareDescription sd, HashMap<String, String> prop) throws ConnException {
         try {
             String instanceCode = hd.getImageType();
-            String vmId = client.create_compute(hd.getImageName(), instanceCode);
+            String vmId = client.create_compute(hd.getImageName(), instanceCode);            
             VirtualResource vr = new VirtualResource(vmId, hd, sd, prop);
-            /*
-             * if (debug) { logger.debug("VM "+vmId+ " Created"); }
-             */
-            return vr;
+            return vr.getId();
         } catch (Exception e) {
-            // logger.error("Error creating a VM", e);
-            logger.error("Error creating a VM");
-            throw new ConnException(e);
+            logger.error("Error creating a VM", e);
+            throw new ConnException("Error creating a VM", e);
         }
     }
 

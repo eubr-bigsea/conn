@@ -115,7 +115,12 @@ public class JClouds extends Connector {
         try {
             Template template = generateTemplate(hd, sd, prop);
             Set<? extends NodeMetadata> vms = jclouds.createVMS(APP_NAME, 1, template);
-            return vms.iterator().next().getId();
+            
+            String vmId = vms.iterator().next().getId();
+            VMID_TO_HARDWARE_REQUEST.put(vmId, hd);
+            VMID_TO_SOFTWARE_REQUEST.put(vmId, sd);
+            
+            return vmId;
         } catch (RunNodesException e) {
             throw new ConnException(e);
         } catch (IOException e) {

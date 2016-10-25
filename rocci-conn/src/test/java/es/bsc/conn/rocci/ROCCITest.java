@@ -9,14 +9,13 @@ import java.util.HashMap;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.Test;
 
 
 public class ROCCITest {
     
     private static final Logger LOGGER = LogManager.getLogger("Console");
 
-    @Test
+    //@Test
     public void testROCCI() throws ConnException {
         LOGGER.info("Hello Testing API code for rocci!"); // Display the string.
 

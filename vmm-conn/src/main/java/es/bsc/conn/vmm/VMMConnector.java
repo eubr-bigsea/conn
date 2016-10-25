@@ -47,7 +47,7 @@ public class VMMConnector extends Connector {
             VMID_TO_SOFTWARE_REQUEST.put(vmId, sd);
 
             VirtualResource vr = new VirtualResource(vmId, hd, sd, prop);
-            return vr;
+            return vr.getId();
         } catch (Exception e) {
             logger.error("Exception submitting vm creation", e);
             throw new ConnException(e);
