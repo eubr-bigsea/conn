@@ -1,14 +1,13 @@
 package es.bsc.conn.mesos;
 
 import es.bsc.conn.Connector;
-import es.bsc.conn.exceptions.ConnectorException;
+import es.bsc.conn.clients.mesos.framework.MesosFramework;
+import es.bsc.conn.clients.mesos.framework.exceptions.FrameworkException;
+import es.bsc.conn.exceptions.ConnException;
 import es.bsc.conn.loggers.Loggers;
 import es.bsc.conn.types.HardwareDescription;
 import es.bsc.conn.types.SoftwareDescription;
 import es.bsc.conn.types.VirtualResource;
-
-import es.bsc.mesos.framework.MesosFramework;
-import es.bsc.mesos.framework.exceptions.FrameworkException;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -36,14 +35,14 @@ public class Mesos extends Connector {
     private final Map<String, VirtualResource> resources;
 
 
-    public Mesos(HashMap<String, String> props) throws ConnectorException {
+    public Mesos(HashMap<String, String> props) throws ConnException {
         super(props);
         logger.info("Initializing MESOS Connector");
         resources = new HashMap<String, VirtualResource>();
         try {
             framework = new MesosFramework(props);
         } catch (FrameworkException fe) {
-            throw new ConnectorException(fe);
+            throw new ConnException(fe);
         }
     }
 
@@ -56,7 +55,7 @@ public class Mesos extends Connector {
     }
 
     @Override
-    public Object create(HardwareDescription hd, SoftwareDescription sd, HashMap<String, String> prop) throws ConnectorException {
+    public Object create(HardwareDescription hd, SoftwareDescription sd, HashMap<String, String> prop) throws ConnException {
         List<Resource> res = new LinkedList<Resource>();
         res.add(buildResource("cpus", hd.getTotalComputingUnits()));
         res.add(buildResource("mem", GIGAS_TO_MEGAS * hd.getMemorySize()));
@@ -69,15 +68,15 @@ public class Mesos extends Connector {
     }
 
     @Override
-    public VirtualResource waitUntilCreation(Object id) throws ConnectorException {
+    public VirtualResource waitUntilCreation(Object id) throws ConnException {
         String identifier = (String) id;
         if (!resources.containsKey(identifier)) {
-            throw new ConnectorException("This identifier does not exist " + identifier);
+            throw new ConnException("This identifier does not exist " + identifier);
         }
         VirtualResource vr = resources.get(identifier);
         String ip = framework.waitWorkerUntilRunning(identifier);
         if (UNDEFINED_IP.equals(ip)) {
-            throw new ConnectorException("Could not wait until creation of worker " + id);
+            throw new ConnException("Could not wait until creation of worker " + id);
         }
         vr.setIp(ip);
         return vr;

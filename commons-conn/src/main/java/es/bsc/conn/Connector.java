@@ -1,6 +1,6 @@
 package es.bsc.conn;
 
-import es.bsc.conn.exceptions.ConnectorException;
+import es.bsc.conn.exceptions.ConnException;
 import es.bsc.conn.types.HardwareDescription;
 import es.bsc.conn.types.SoftwareDescription;
 import es.bsc.conn.types.VirtualResource;
@@ -13,9 +13,9 @@ public abstract class Connector {
     public Connector(HashMap<String, String> prop) {
     }
 
-    public abstract Object create(HardwareDescription hd, SoftwareDescription sd, HashMap<String, String> prop) throws ConnectorException;
+    public abstract Object create(HardwareDescription hd, SoftwareDescription sd, HashMap<String, String> prop) throws ConnException;
 
-    public abstract VirtualResource waitUntilCreation(Object id) throws ConnectorException;
+    public abstract VirtualResource waitUntilCreation(Object id) throws ConnException;
 
     public abstract void destroy(Object id);
 

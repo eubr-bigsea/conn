@@ -1,17 +1,17 @@
 package es.bsc.conn.rocci;
 
 import es.bsc.conn.Connector;
-import es.bsc.conn.exceptions.ConnectorException;
+import es.bsc.conn.clients.exceptions.ConnClientException;
+import es.bsc.conn.clients.rocci.RocciClient;
+import es.bsc.conn.exceptions.ConnException;
+import es.bsc.conn.loggers.Loggers;
 import es.bsc.conn.types.HardwareDescription;
 import es.bsc.conn.types.SoftwareDescription;
 import es.bsc.conn.types.VirtualResource;
 
-import es.bsc.conn.rocci.client.RocciClient;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import es.bsc.conn.loggers.Loggers;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -156,7 +156,7 @@ public class ROCCI extends Connector {
     }
 
     @Override
-    public Object create(HardwareDescription hd, SoftwareDescription sd, HashMap<String, String> prop) throws ConnectorException {
+    public Object create(HardwareDescription hd, SoftwareDescription sd, HashMap<String, String> prop) throws ConnException {
         try {
             String instanceCode = hd.getImageType();
             String vmId = client.create_compute(hd.getImageName(), instanceCode);
@@ -168,50 +168,46 @@ public class ROCCI extends Connector {
         } catch (Exception e) {
             // logger.error("Error creating a VM", e);
             logger.error("Error creating a VM");
-            throw new ConnectorException(e);
+            throw new ConnException(e);
         }
-
     }
 
     @Override
-    public VirtualResource waitUntilCreation(Object id) throws ConnectorException {
-        // String vmId = vr.getId().toString();
+    public VirtualResource waitUntilCreation(Object id) throws ConnException {
         logger.debug("Waiting for creation " + id);
+        
         String vmId = (String) id;
-        // logger.info("Waiting until VM "+ vmId +" is created");
         logger.info("Waiting until VM " + vmId + " is created");
+        
         Integer polls = 0;
         int errors = 0;
-
         String status = null;
-        status = client.get_resource_status(vmId);
-
-        try {
-            Thread.sleep(RETRY_TIME * 1_000);
-        } catch (InterruptedException ie) {
-            logger.warn("Sleep Interrumped", ie);
-        }
-
-        while (!status.equals("active")) {
+        do {
             try {
-                polls++;
                 Thread.sleep(RETRY_TIME * 1_000);
                 if (RETRY_TIME * polls >= MAX_VM_CREATION_TIME * 60) {
                     // logger.error("Maximum VM waiting for creation time reached.");
-                    throw new ConnectorException("Maximum VM creation time reached.");
+                    throw new ConnException("Maximum VM creation time reached.");
                 }
+                polls++;
                 status = client.get_resource_status(vmId);
-                errors = 0;
             } catch (Exception e) {
                 errors++;
                 if (errors == MAX_ALLOWED_ERRORS) {
                     // logger.error("ERROR_MSG = [\n\tError = " + e.getMessage() + "\n]");
                     logger.error("ERROR_MSG = [\n\tError = " + e.getMessage() + "\n]");
-                    throw new ConnectorException("Error getting the status of the request");
+                    throw new ConnException("Error getting the status of the request");
                 }
             }
+        }  while (!status.equals("active"));
+        
+        // Retrieve IP
+        String ip = null;
+        try {
+            ip = client.get_resource_address(vmId);
+        } catch (ConnClientException cce) {
+            throw new ConnException("Error retrieving resource address from client", cce);
         }
-        String ip = client.get_resource_address(vmId);
 
         // Create Virtual Resource
         VirtualResource vr = new VirtualResource();

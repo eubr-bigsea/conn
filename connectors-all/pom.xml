@@ -35,12 +35,27 @@
 	<dependencies>
 		<dependency>
 			<groupId>es.bsc</groupId>
+			<artifactId>dummy-conn</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>es.bsc</groupId>
 			<artifactId>rocci-conn</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>es.bsc</groupId>
 			<artifactId>mesos-conn</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>es.bsc</groupId>
+			<artifactId>jclouds-conn</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>es.bsc</groupId>
+			<artifactId>vmm-conn</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 	</dependencies>

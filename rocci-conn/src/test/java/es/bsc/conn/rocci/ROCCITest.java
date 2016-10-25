@@ -1,6 +1,6 @@
 package es.bsc.conn.rocci;
 
-import es.bsc.conn.exceptions.ConnectorException;
+import es.bsc.conn.exceptions.ConnException;
 import es.bsc.conn.types.HardwareDescription;
 import es.bsc.conn.types.SoftwareDescription;
 import es.bsc.conn.types.VirtualResource;
@@ -9,13 +9,15 @@ import java.util.HashMap;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.junit.Test;
 
 
 public class ROCCITest {
     
     private static final Logger LOGGER = LogManager.getLogger("Console");
 
-    public static void main(String[] args) throws ConnectorException {
+    @Test
+    public void testROCCI() throws ConnException {
         LOGGER.info("Hello Testing API code for rocci!"); // Display the string.
 
         /* sudo occi --endpoint https://rocci-server.bsc.es:11443

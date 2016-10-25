@@ -1,7 +1,7 @@
 package es.bsc.conn.dummy;
 
 import es.bsc.conn.Connector;
-import es.bsc.conn.exceptions.ConnectorException;
+import es.bsc.conn.exceptions.ConnException;
 import es.bsc.conn.loggers.Loggers;
 import es.bsc.conn.types.HardwareDescription;
 import es.bsc.conn.types.SoftwareDescription;
@@ -15,41 +15,46 @@ import org.apache.logging.log4j.Logger;
 
 public class Dummy extends Connector {
 
-    private static final Logger logger = LogManager.getLogger(Loggers.DUMMY);
+    private static final Logger LOGGER = LogManager.getLogger(Loggers.DUMMY);
 
 
     public Dummy(HashMap<String, String> prop) {
         super(prop);
     }
 
-    public VirtualResource create(HardwareDescription hd, SoftwareDescription sd, HashMap<String, String> prop) {
-        logger.info("creating VirtualResource");
+    @Override
+    public VirtualResource create(HardwareDescription hd, SoftwareDescription sd, HashMap<String, String> prop) throws ConnException {
+        LOGGER.info("creating VirtualResource");
         return new VirtualResource();
     }
-
-    public void destroy(Object id) {
-        logger.info("deleting VirtualResource");
-    }
-
-    public long getTimeSlot() {
-        logger.info("getting time slot");
-        return 1;
-    }
-
-    public float getPriceSlot(VirtualResource virtualResource) {
-        logger.info("getting price slot");
-        return (float) 1.0;
-    }
-
-    public void close() {
-        logger.info("closing");
+    
+    @Override
+    public VirtualResource waitUntilCreation(Object id) throws ConnException {
+        VirtualResource vr = (VirtualResource) id;
+        LOGGER.info("waiting VirtualResource");
+        return vr;
     }
 
     @Override
-    public VirtualResource waitUntilCreation(Object id) throws ConnectorException {
-        VirtualResource vr = (VirtualResource) id;
-        logger.info("waiting VirtualResource");
-        return vr;
+    public void destroy(Object id) {
+        LOGGER.info("deleting VirtualResource");
+    }
+
+    @Override
+    public long getTimeSlot() {
+        LOGGER.info("getting time slot");
+        return 1;
+    }
+
+    @Override
+    public float getPriceSlot(VirtualResource virtualResource) {
+        LOGGER.info("getting price slot");
+        return (float) 1.0;
+    }
+
+    @Override
+    public void close() {
+        LOGGER.info("closing");
     }
 
 }

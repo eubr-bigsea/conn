@@ -28,7 +28,7 @@
 	<!-- PROPERTIES -->
 	<properties>
 		<!-- CONN CLIENTS VERSION -->
-		<conn-clients.version>1.0-1</conn-clients.version>
+		<conn-clients.version>1.0-2</conn-clients.version>
 
 		<!-- JUnit version -->
 		<junit.version>4.12</junit.version>
@@ -171,6 +171,8 @@
 		<module>dummy-conn</module>
 		<module>rocci-conn</module>
 		<module>mesos-conn</module>
+		<module>jclouds-conn</module>
+		<module>vmm-conn</module>
 		<module>connectors-all</module>
 	</modules>
 </project>

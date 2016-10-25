@@ -10,14 +10,15 @@ public class Loggers {
 
     // Root connectors logger name
     public static final String CONNECTORS = IT + ".Connectors";
-    public static final String CONNECTORS_IMPL = IT + ".ConnectorsImpl";
+    public static final String CONN = CONNECTORS + ".Conn";
 
     // Specific connector client loggers for each implementation
-    public static final String DUMMY = CONNECTORS + ".Dummy";
-    public static final String ROCCI = CONNECTORS + ".Rocci";
-    public static final String JCLOUDS = CONNECTORS + ".JClouds";
-    public static final String DOCKER = CONNECTORS + ".Docker";
-    public static final String MESOS = CONNECTORS + ".Mesos";
+    public static final String DUMMY = CONN + ".Dummy";
+    public static final String ROCCI = CONN + ".Rocci";
+    public static final String JCLOUDS = CONN + ".JClouds";
+    public static final String DOCKER = CONN + ".Docker";
+    public static final String MESOS = CONN + ".Mesos";
+    public static final String VMM = CONN + ".VMM";
 
 
     private Loggers() {

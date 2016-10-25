@@ -1,6 +1,6 @@
 package es.bsc.conn.exceptions;
 
-public class ConnectorException extends Exception {
+public class ConnException extends Exception {
 
     /**
      * Exception Version UID are 2L in all Runtime
@@ -8,15 +8,15 @@ public class ConnectorException extends Exception {
     private static final long serialVersionUID = 2L;
 
 
-    public ConnectorException(String message) {
+    public ConnException(String message) {
         super(message);
     }
 
-    public ConnectorException(Exception e) {
+    public ConnException(Exception e) {
         super(e);
     }
 
-    public ConnectorException(String msg, Exception e) {
+    public ConnException(String msg, Exception e) {
         super(msg, e);
     }
 

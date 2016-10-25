@@ -1,5 +1,6 @@
 package es.bsc.conn.dummy;
 
+import es.bsc.conn.exceptions.ConnException;
 import es.bsc.conn.types.HardwareDescription;
 import es.bsc.conn.types.SoftwareDescription;
 
@@ -23,7 +24,13 @@ public class DummyTest {
         HardwareDescription hd = new HardwareDescription();
         SoftwareDescription sd = new SoftwareDescription();
         HashMap<String, String> prop = new HashMap<String, String>();
-        Object id = d.create(hd, sd, prop);
+        
+        Object id = null;
+        try {
+            id = d.create(hd, sd, prop);
+        } catch (ConnException ce) {
+            LOGGER.error("Exception creating vm", ce);
+        }
 
         // Integer id = (Integer) d.create(hd, sd, prop);
         LOGGER.info("VM id: " + id);
