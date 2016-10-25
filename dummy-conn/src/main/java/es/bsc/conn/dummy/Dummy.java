@@ -8,6 +8,7 @@ import es.bsc.conn.types.SoftwareDescription;
 import es.bsc.conn.types.VirtualResource;
 
 import java.util.HashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -17,44 +18,74 @@ public class Dummy extends Connector {
 
     private static final Logger LOGGER = LogManager.getLogger(Loggers.DUMMY);
 
+    private static AtomicInteger nextId = new AtomicInteger(100);
 
-    public Dummy(HashMap<String, String> prop) {
-        super(prop);
+
+    public Dummy(HashMap<String, String> props) {
+        super(props);
     }
 
     @Override
-    public VirtualResource create(HardwareDescription hd, SoftwareDescription sd, HashMap<String, String> prop) throws ConnException {
-        LOGGER.info("creating VirtualResource");
-        return new VirtualResource();
+    public Object create(HardwareDescription hd, SoftwareDescription sd, HashMap<String, String> prop) throws ConnException {
+        LOGGER.info("Creating VirtualResource");
+        LOGGER.debug("Hardware Description: " + hd);
+        LOGGER.debug("Software Description: " + sd);
+
+        TestEnvId envId = new TestEnvId();
+
+        LOGGER.info("Assigned ID: " + envId);
+        return envId;
     }
-    
+
     @Override
     public VirtualResource waitUntilCreation(Object id) throws ConnException {
-        VirtualResource vr = (VirtualResource) id;
-        LOGGER.info("waiting VirtualResource");
+        try {
+            Thread.sleep(15_000);
+        } catch (Exception e) {
+            // No need to handle such exception
+        }
+
+        LOGGER.info("Waiting VirtualResource " + id);
+        VirtualResource vr = new VirtualResource();
+        vr.setId(id);
+        vr.setIp("127.0.0." + nextId.getAndIncrement());
+
         return vr;
     }
 
     @Override
     public void destroy(Object id) {
-        LOGGER.info("deleting VirtualResource");
+        LOGGER.info("Deleting VirtualResource " + id);
     }
 
     @Override
     public long getTimeSlot() {
-        LOGGER.info("getting time slot");
+        LOGGER.info("Getting time slot");
         return 1;
     }
 
     @Override
     public float getPriceSlot(VirtualResource virtualResource) {
-        LOGGER.info("getting price slot");
-        return (float) 1.0;
+        LOGGER.info("Getting price slot");
+        return 0.0f;
     }
 
     @Override
     public void close() {
-        LOGGER.info("closing");
+        LOGGER.info("Closing");
+    }
+
+
+    private static class TestEnvId {
+
+        private static AtomicInteger nextId = new AtomicInteger(0);
+        private int id = nextId.getAndIncrement();
+
+
+        @Override
+        public String toString() {
+            return "TestEventId:" + id;
+        }
     }
 
 }
