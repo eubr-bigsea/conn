@@ -1,4 +1,4 @@
-package integratedtoolkit.connectors.jclouds;
+package es.bsc.conn.jclouds;
 
 import java.io.File;
 import java.io.IOException;
