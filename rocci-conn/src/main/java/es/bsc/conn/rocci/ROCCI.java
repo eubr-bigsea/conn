@@ -279,17 +279,30 @@ public class ROCCI extends Connector {
         String architecture = (String) grantedHD[3];
         Float speed = (Float) grantedHD[4];
         
+        // Check cores and set default value is none
+        if (cores == null || cores < 0) {
+            cores = 1;
+        }
+        
         // Create a runtime processor
         Processor runtimeProc = new es.bsc.conn.types.Processor();
         runtimeProc.setComputingUnits(cores);
-        runtimeProc.setArchitecture(architecture);
-        runtimeProc.setSpeed(speed);
+        if (architecture != null && !architecture.isEmpty()) {
+            runtimeProc.setArchitecture(architecture);
+        }
+        if (speed != null) {
+            runtimeProc.setSpeed(speed);
+        }
         List<Processor> procs = new ArrayList<>();
         procs.add(runtimeProc);
     
         // Add Hardware information
-        hd.setMemorySize(memory);
-        hd.setStorageSize(storage);
+        if (memory != null) {
+            hd.setMemorySize(memory);
+        }
+        if (storage != null) {
+            hd.setStorageSize(storage);
+        }
         hd.setProcessors(procs);
         hd.setTotalComputingUnits(cores);
     }
