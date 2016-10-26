@@ -6,7 +6,6 @@ import java.util.Map;
 public class VirtualResource {
 
     private static final String DEFAULT_ID = "-1";
-    private static final String DEFAULT_IP = "0.0.0.0";
     private static final String INVALID_IP = "-1.-1.-1.-1";
 
     private String ip;
@@ -18,7 +17,7 @@ public class VirtualResource {
 
     public VirtualResource() {
         this.id = DEFAULT_ID;
-        this.ip = DEFAULT_IP;
+        this.ip = INVALID_IP;
         this.hd = null;
         this.sd = null;
         this.properties = null;

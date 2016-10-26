@@ -88,7 +88,7 @@ public class JClouds extends Connector {
         
         String time = props.get("time-slot");
         if (time != null) {
-            timeSlot = Integer.parseInt(time) * MS_TO_S;
+            timeSlot = Integer.parseInt(time) * (long)MS_TO_S;
         } else {
             throw new ConnException("Provider billing time-slot must be specified with \"time-slot\" property");
         }
@@ -118,7 +118,7 @@ public class JClouds extends Connector {
     @Override
     public Object create(HardwareDescription hd, SoftwareDescription sd, Map<String, String> prop) throws ConnException {
         try {
-            Template template = generateTemplate(hd, prop);
+            Template template = generateTemplate(hd);
             Set<? extends NodeMetadata> vms = jcloudsClient.createVMS(APP_NAME, 1, template);
             
             String vmId = vms.iterator().next().getId();
@@ -151,11 +151,7 @@ public class JClouds extends Connector {
                 }
 
                 tries++;
-                try {
-                    Thread.sleep(POLLING_INTERVAL * MS_TO_S);
-                } catch (InterruptedException ie) {
-                    throw new ConnException(ie);
-                }
+                Thread.sleep(POLLING_INTERVAL * MS_TO_S);
                 vmNodeMetadata = jcloudsClient.getNode(vmId);
             }
             String ip = getIp(vmNodeMetadata);
@@ -196,7 +192,7 @@ public class JClouds extends Connector {
             vr.setSd(sd);
 
             return vr;
-        } catch (Exception e) {
+        } catch (ConnException | InterruptedException e) {
             LOGGER.error("Exception waiting for VM Creation");
             throw new ConnException("Exception waiting for VM Creation", e);
         }
@@ -226,7 +222,7 @@ public class JClouds extends Connector {
         // Nothing to do
     }
 
-    private Template generateTemplate(HardwareDescription hd, Map<String, String> prop) throws IOException {
+    private Template generateTemplate(HardwareDescription hd) throws IOException {
         TemplateOptions to = new TemplateOptions();
         
         String key = keyPairLocation + keyPairName;
