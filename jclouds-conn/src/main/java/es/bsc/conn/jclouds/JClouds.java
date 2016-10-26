@@ -202,6 +202,7 @@ public class JClouds extends Connector {
     @Override
     public void destroy(Object id) {
         String vmId = (String) id;
+        
         jclouds.destroyNode(vmId);
         VMID_TO_HARDWARE_REQUEST.remove(vmId);
         VMID_TO_SOFTWARE_REQUEST.remove(vmId);

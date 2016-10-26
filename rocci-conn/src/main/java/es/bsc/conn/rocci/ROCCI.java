@@ -6,11 +6,13 @@ import es.bsc.conn.clients.rocci.RocciClient;
 import es.bsc.conn.exceptions.ConnException;
 import es.bsc.conn.loggers.Loggers;
 import es.bsc.conn.types.HardwareDescription;
+import es.bsc.conn.types.Processor;
 import es.bsc.conn.types.SoftwareDescription;
 import es.bsc.conn.types.VirtualResource;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -24,6 +26,9 @@ public class ROCCI extends Connector {
 
     private static final Integer RETRY_TIME = 5; // Seconds
     private static final long DEFAULT_TIME_SLOT = 5; // Minutes
+    
+    private static final HashMap<String, HardwareDescription> VMID_TO_HARDWARE_REQUEST = new HashMap<String, HardwareDescription>();
+    private static final HashMap<String, SoftwareDescription> VMID_TO_SOFTWARE_REQUEST = new HashMap<String, SoftwareDescription>();
 
     private final RocciClient client;
     private static Integer MAX_VM_CREATION_TIME = 10; // Minutes
@@ -159,7 +164,11 @@ public class ROCCI extends Connector {
     public Object create(HardwareDescription hd, SoftwareDescription sd, HashMap<String, String> prop) throws ConnException {
         try {
             String instanceCode = hd.getImageType();
-            String vmId = client.create_compute(hd.getImageName(), instanceCode);            
+            String vmId = client.create_compute(hd.getImageName(), instanceCode);   
+            
+            VMID_TO_HARDWARE_REQUEST.put(vmId,  hd);
+            VMID_TO_SOFTWARE_REQUEST.put(vmId,  sd);
+            
             VirtualResource vr = new VirtualResource(vmId, hd, sd, prop);
             return vr.getId();
         } catch (Exception e) {
@@ -182,7 +191,6 @@ public class ROCCI extends Connector {
             try {
                 Thread.sleep(RETRY_TIME * 1_000);
                 if (RETRY_TIME * polls >= MAX_VM_CREATION_TIME * 60) {
-                    // logger.error("Maximum VM waiting for creation time reached.");
                     throw new ConnException("Maximum VM creation time reached.");
                 }
                 polls++;
@@ -209,15 +217,37 @@ public class ROCCI extends Connector {
         VirtualResource vr = new VirtualResource();
         vr.setId(vmId);
         vr.setIp(ip);
+        vr.setProperties(null);
+
+        HardwareDescription hd = VMID_TO_HARDWARE_REQUEST.get(vmId);
+        if (hd == null) {
+            throw new ConnException("Unregistered hardware description for vmId = " + vmId);
+        }
+        try {
+            getHardwareInformation(vmId, hd);
+        } catch (ConnClientException cce) {
+            throw new ConnException("Error retrieving resource hardware description of VM " + vmId + " from client", cce);
+        }
+        vr.setHd(hd);
+
+        SoftwareDescription sd = VMID_TO_SOFTWARE_REQUEST.get(vmId);
+        if (sd == null) {
+            throw new ConnException("Unregistered software description for vmId = " + vmId);
+        }
+        sd.setOperatingSystemType("Linux");
+        vr.setSd(sd);
+
         return vr;
     }
 
     @Override
     public void destroy(Object id) {
         String vmId = (String) id;
-        // logger.info(" Destroy VM "+vmId+" with rOCCI connector");
         logger.info(" Destroy VM " + vmId + " with rOCCI connector");
+        
         client.delete_compute(vmId);
+        VMID_TO_HARDWARE_REQUEST.remove(vmId);
+        VMID_TO_SOFTWARE_REQUEST.remove(vmId);
     }
 
     @Override
@@ -233,6 +263,30 @@ public class ROCCI extends Connector {
     @Override
     public void close() {
         // Nothing to do
+    }
+    
+    private void getHardwareInformation(String vmId, HardwareDescription hd) throws ConnClientException {
+        Object[] grantedHD = client.get_hardware_description(vmId);
+        // grantedHD is of the form {memSize, storageSize, cores, architecture, speed}
+        Float memory = (Float) grantedHD[0];
+        Float storage = (Float) grantedHD[1];
+        Integer cores = (Integer) grantedHD[2];
+        String architecture = (String) grantedHD[3];
+        Float speed = (Float) grantedHD[4];
+        
+        // Create a runtime processor
+        Processor runtime_proc = new es.bsc.conn.types.Processor();
+        runtime_proc.setComputingUnits(cores);
+        runtime_proc.setArchitecture(architecture);
+        runtime_proc.setSpeed(speed);
+        List<Processor> procs = new ArrayList<Processor>();
+        procs.add(runtime_proc);
+    
+        // Add Hardware information
+        hd.setMemorySize(memory);
+        hd.setStorageSize(storage);
+        hd.setProcessors(procs);
+        hd.setTotalComputingUnits(cores);
     }
 
 }
