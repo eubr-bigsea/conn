@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import static com.google.common.base.Charsets.UTF_8;
@@ -48,10 +49,10 @@ public class JClouds extends Connector {
     private static final String APP_NAME = System.getProperty(COMPSS_APP_NAME_PROPERTY).isEmpty() ?
             DEFAULT_APP_NAME : System.getProperty(COMPSS_APP_NAME_PROPERTY);
     
-    private static final HashMap<String, HardwareDescription> VMID_TO_HARDWARE_REQUEST = new HashMap<String, HardwareDescription>();
-    private static final HashMap<String, SoftwareDescription> VMID_TO_SOFTWARE_REQUEST = new HashMap<String, SoftwareDescription>();
+    private static final HashMap<String, HardwareDescription> VMID_TO_HARDWARE_REQUEST = new HashMap<>();
+    private static final HashMap<String, SoftwareDescription> VMID_TO_SOFTWARE_REQUEST = new HashMap<>();
     
-    private final JCloudsClient jclouds;
+    private final JCloudsClient jcloudsClient;
     private final String provider;
     private final String server;
     private final String user;
@@ -60,8 +61,12 @@ public class JClouds extends Connector {
     private final String keyPairName;
     private final long timeSlot;    
 
-
-    public JClouds(String providerName, HashMap<String, String> props) throws ConnException {
+    /**
+     * Initializes the JClouds connector with the given properties
+     * 
+     * @param props
+     */
+    public JClouds(Map<String, String> props) throws ConnException {
         super(props);
         
         server = props.get("Server");
@@ -104,26 +109,24 @@ public class JClouds extends Connector {
         }
 
         try {
-            jclouds = new JCloudsClient(user, credential, provider, server);
+            jcloudsClient = new JCloudsClient(user, credential, provider, server);
         } catch (ConnClientException cce) {
             throw new ConnException("Exception creating client", cce);
         }
     }
 
     @Override
-    public Object create(HardwareDescription hd, SoftwareDescription sd, HashMap<String, String> prop) throws ConnException {
+    public Object create(HardwareDescription hd, SoftwareDescription sd, Map<String, String> prop) throws ConnException {
         try {
-            Template template = generateTemplate(hd, sd, prop);
-            Set<? extends NodeMetadata> vms = jclouds.createVMS(APP_NAME, 1, template);
+            Template template = generateTemplate(hd, prop);
+            Set<? extends NodeMetadata> vms = jcloudsClient.createVMS(APP_NAME, 1, template);
             
             String vmId = vms.iterator().next().getId();
             VMID_TO_HARDWARE_REQUEST.put(vmId, hd);
             VMID_TO_SOFTWARE_REQUEST.put(vmId, sd);
             
             return vmId;
-        } catch (RunNodesException e) {
-            throw new ConnException(e);
-        } catch (IOException e) {
+        } catch (RunNodesException | IOException e) {
             throw new ConnException(e);
         }
     }
@@ -131,7 +134,7 @@ public class JClouds extends Connector {
     @Override
     public VirtualResource waitUntilCreation(Object id) throws ConnException {
         String vmId = (String) id;
-        NodeMetadata vmNodeMetadata = jclouds.getNode(vmId);
+        NodeMetadata vmNodeMetadata = jcloudsClient.getNode(vmId);
         try {
             LOGGER.info("VM State is " + vmNodeMetadata.getStatus().toString());
             int tries = 0;
@@ -150,10 +153,10 @@ public class JClouds extends Connector {
                 tries++;
                 try {
                     Thread.sleep(POLLING_INTERVAL * MS_TO_S);
-                } catch (InterruptedException e) {
-                    // No need to handle such exception
+                } catch (InterruptedException ie) {
+                    throw new ConnException(ie);
                 }
-                vmNodeMetadata = jclouds.getNode(vmId);
+                vmNodeMetadata = jcloudsClient.getNode(vmId);
             }
             String ip = getIp(vmNodeMetadata);
             
@@ -168,14 +171,14 @@ public class JClouds extends Connector {
                 throw new ConnException("Unregistered hardware description for vmId = " + vmId);
             }
             
-            List<es.bsc.conn.types.Processor> procs = new ArrayList<es.bsc.conn.types.Processor>();
+            List<es.bsc.conn.types.Processor> procs = new ArrayList<>();
             int totalCores = 0;
             for (Processor p : vmNodeMetadata.getHardware().getProcessors()) {
-                es.bsc.conn.types.Processor runtime_proc = new es.bsc.conn.types.Processor();
+                es.bsc.conn.types.Processor runtimeProc = new es.bsc.conn.types.Processor();
                 int pCores = (int) p.getCores();
-                runtime_proc.setComputingUnits((int) p.getCores());
-                runtime_proc.setSpeed((float) p.getSpeed());
-                procs.add(runtime_proc);
+                runtimeProc.setComputingUnits((int) p.getCores());
+                runtimeProc.setSpeed((float) p.getSpeed());
+                procs.add(runtimeProc);
                 totalCores = totalCores + pCores;
             }
             hd.setProcessors(procs);
@@ -203,7 +206,7 @@ public class JClouds extends Connector {
     public void destroy(Object id) {
         String vmId = (String) id;
         
-        jclouds.destroyNode(vmId);
+        jcloudsClient.destroyNode(vmId);
         VMID_TO_HARDWARE_REQUEST.remove(vmId);
         VMID_TO_SOFTWARE_REQUEST.remove(vmId);
     }
@@ -223,7 +226,7 @@ public class JClouds extends Connector {
         // Nothing to do
     }
 
-    private Template generateTemplate(HardwareDescription hd, SoftwareDescription sd, HashMap<String, String> prop) throws IOException {
+    private Template generateTemplate(HardwareDescription hd, Map<String, String> prop) throws IOException {
         TemplateOptions to = new TemplateOptions();
         
         String key = keyPairLocation + keyPairName;
@@ -232,7 +235,7 @@ public class JClouds extends Connector {
         to.overrideLoginPrivateKey(Files.toString(new File(key), UTF_8));
 
         LOGGER.debug("Adding ssh inbound port");
-        HashSet<Integer> ports = new HashSet<Integer>();
+        HashSet<Integer> ports = new HashSet<>();
         ports.add(22);
         int minPort = Integer.parseInt(hd.getImageProperties().get("adaptor-max-port"));
         int maxPort = Integer.parseInt(hd.getImageProperties().get("adaptor-min-port"));
@@ -245,7 +248,7 @@ public class JClouds extends Connector {
         to.inboundPorts(Ints.toArray(ports));
 
         LOGGER.debug("Creating template with image " + hd.getImageName());
-        return jclouds.createTemplate(hd.getImageType(), hd.getImageName(), to);
+        return jcloudsClient.createTemplate(hd.getImageType(), hd.getImageName(), to);
     }
 
     private float getTotalDisk(List<? extends Volume> volumes) {
@@ -260,11 +263,6 @@ public class JClouds extends Connector {
         }
         return totalDisk;
     }
-
-    /*
-     * private int getTotalCores(List<? extends Processor> processors) { int totalCores = 0; for (Processor proc :
-     * processors) { totalCores = totalCores + (int)proc.getCores(); } return totalCores; }
-     */
 
     private String getIp(NodeMetadata vmd) throws ConnException {
         if (vmd.getPublicAddresses().isEmpty()) {

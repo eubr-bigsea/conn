@@ -3,12 +3,13 @@ package es.bsc.conn.types;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 
 public class HardwareDescription {
 
     // Processor
-    protected List<Processor> processors = new LinkedList<Processor>();
+    protected List<Processor> processors = new LinkedList<>();
     protected int totalComputingUnits = BasicTypes.ZERO_INT;
 
     // Memory
@@ -26,16 +27,16 @@ public class HardwareDescription {
     // Image
     protected String imageName;
     protected String imageType;
-    protected HashMap<String, String> imageProperties = new HashMap<>();
+    protected Map<String, String> imageProperties = new HashMap<>();
 
 
     public HardwareDescription() {
-
+        // All default values are already set
     }
 
     public HardwareDescription(List<Processor> processors, int totalComputingUnits, float memorySize, String memoryType, float storageSize,
             String storageType, int priceTimeUnit, float pricePerUnit, String imageName, String imageType,
-            HashMap<String, String> imageProperties) {
+            Map<String, String> imageProperties) {
         
         this.processors = processors;
         this.totalComputingUnits = totalComputingUnits;
@@ -130,11 +131,11 @@ public class HardwareDescription {
         this.imageType = imageType;
     }
 
-    public HashMap<String, String> getImageProperties() {
+    public Map<String, String> getImageProperties() {
         return imageProperties;
     }
 
-    public void setImageProperties(HashMap<String, String> imageProperties) {
+    public void setImageProperties(Map<String, String> imageProperties) {
         this.imageProperties = imageProperties;
     }
     

@@ -14,6 +14,7 @@ public class Processor {
 
 
     public Processor() {
+        // All default values are already set
     }
 
     public Processor(String name) {

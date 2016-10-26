@@ -2,7 +2,10 @@ package es.bsc.conn.loggers;
 
 import es.bsc.conn.exceptions.NonInstantiableException;
 
-
+/**
+ * Loggers' names for Connectors
+ *
+ */
 public class Loggers {
 
     // Integrated Toolkit

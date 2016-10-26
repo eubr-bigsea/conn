@@ -1,10 +1,10 @@
 package es.bsc.conn.types;
 
-import java.util.HashMap;
+import java.util.Map;
 
 
 public class VirtualResource {
-    
+
     private static final String DEFAULT_ID = "-1";
     private static final String DEFAULT_IP = "0.0.0.0";
     private static final String INVALID_IP = "-1.-1.-1.-1";
@@ -13,7 +13,7 @@ public class VirtualResource {
     private Object id;
     private HardwareDescription hd;
     private SoftwareDescription sd;
-    private HashMap<String, String> properties;
+    private Map<String, String> properties;
 
 
     public VirtualResource() {
@@ -24,7 +24,7 @@ public class VirtualResource {
         this.properties = null;
     }
 
-    public VirtualResource(Object id, HardwareDescription hd, SoftwareDescription sd, HashMap<String, String> prop) {
+    public VirtualResource(Object id, HardwareDescription hd, SoftwareDescription sd, Map<String, String> prop) {
         this.id = id;
         this.ip = INVALID_IP;
         this.hd = hd;
@@ -64,12 +64,12 @@ public class VirtualResource {
         this.sd = sd;
     }
 
-    public HashMap<String, String> getProperties() {
+    public Map<String, String> getProperties() {
         return properties;
     }
 
-    public void setProperties(HashMap<String, String> properties) {
+    public void setProperties(Map<String, String> properties) {
         this.properties = properties;
     }
-    
+
 }

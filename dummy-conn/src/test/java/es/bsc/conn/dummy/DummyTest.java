@@ -17,19 +17,26 @@ public class DummyTest {
 
 
     @Test
-    public void apiTest() {
+    public void apiTest() throws Exception {
         LOGGER.info("Hello Testing API code!"); // Display the string.
 
-        Dummy d = new Dummy(new HashMap<String, String>());
+        Dummy d;
+        try {
+            d = new Dummy(new HashMap<String, String>());
+        } catch (ConnException ce) {
+            LOGGER.error("Exception creating Dummy connector", ce);
+            throw ce;
+        }
         HardwareDescription hd = new HardwareDescription();
         SoftwareDescription sd = new SoftwareDescription();
         HashMap<String, String> prop = new HashMap<String, String>();
-        
+
         Object id = null;
         try {
             id = d.create(hd, sd, prop);
         } catch (ConnException ce) {
             LOGGER.error("Exception creating vm", ce);
+            throw ce;
         }
 
         // Integer id = (Integer) d.create(hd, sd, prop);

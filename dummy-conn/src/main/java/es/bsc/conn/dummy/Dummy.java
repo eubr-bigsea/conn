@@ -7,7 +7,7 @@ import es.bsc.conn.types.HardwareDescription;
 import es.bsc.conn.types.SoftwareDescription;
 import es.bsc.conn.types.VirtualResource;
 
-import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.logging.log4j.LogManager;
@@ -21,12 +21,12 @@ public class Dummy extends Connector {
     private static AtomicInteger nextId = new AtomicInteger(100);
 
 
-    public Dummy(HashMap<String, String> props) {
+    public Dummy(Map<String, String> props) throws ConnException {
         super(props);
     }
 
     @Override
-    public Object create(HardwareDescription hd, SoftwareDescription sd, HashMap<String, String> prop) throws ConnException {
+    public Object create(HardwareDescription hd, SoftwareDescription sd, Map<String, String> prop) throws ConnException {
         LOGGER.info("Creating VirtualResource");
         LOGGER.debug("Hardware Description: " + hd);
         LOGGER.debug("Software Description: " + sd);
@@ -41,8 +41,8 @@ public class Dummy extends Connector {
     public VirtualResource waitUntilCreation(Object id) throws ConnException {
         try {
             Thread.sleep(15_000);
-        } catch (Exception e) {
-            // No need to handle such exception
+        } catch (InterruptedException ie) {
+            throw new ConnException(ie);
         }
 
         LOGGER.info("Waiting VirtualResource " + id);

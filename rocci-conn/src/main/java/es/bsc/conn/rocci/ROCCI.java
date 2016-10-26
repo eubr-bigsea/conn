@@ -13,6 +13,7 @@ import es.bsc.conn.types.VirtualResource;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -27,8 +28,8 @@ public class ROCCI extends Connector {
     private static final Integer RETRY_TIME = 5; // Seconds
     private static final long DEFAULT_TIME_SLOT = 5; // Minutes
     
-    private static final HashMap<String, HardwareDescription> VMID_TO_HARDWARE_REQUEST = new HashMap<String, HardwareDescription>();
-    private static final HashMap<String, SoftwareDescription> VMID_TO_SOFTWARE_REQUEST = new HashMap<String, SoftwareDescription>();
+    private static final HashMap<String, HardwareDescription> VMID_TO_HARDWARE_REQUEST = new HashMap<>();
+    private static final HashMap<String, SoftwareDescription> VMID_TO_SOFTWARE_REQUEST = new HashMap<>();
 
     private final RocciClient client;
     private static Integer MAX_VM_CREATION_TIME = 10; // Minutes
@@ -36,102 +37,107 @@ public class ROCCI extends Connector {
     private long timeSlot = DEFAULT_TIME_SLOT;
 
 
-    public ROCCI(HashMap<String, String> props) {
+    /**
+     * Initializes the ROCCI connector with the given properties
+     * 
+     * @param props
+     */
+    public ROCCI(Map<String, String> props) throws ConnException {
         super(props);
         
         // Log creation
         logger.info("Starting ROCCI v" + ROCCI_CLIENT_VERSION);
 
         // ROCCI client parameters setup
-        final ArrayList<String> cmd_string = new ArrayList<String>();
+        final ArrayList<String> cmdString = new ArrayList<>();
         if (props.get("Server") != null) {
-            cmd_string.add("--endpoint " + props.get("Server"));
+            cmdString.add("--endpoint " + props.get("Server"));
         }
 
         if (props.get("auth") != null) {
-            cmd_string.add("--auth " + props.get("auth"));
+            cmdString.add("--auth " + props.get("auth"));
         }
 
         if (props.get("timeout") != null) {
-            cmd_string.add("--timeout " + props.get("timeout"));
+            cmdString.add("--timeout " + props.get("timeout"));
         }
 
         if (props.get("username") != null) {
-            cmd_string.add("--username " + props.get("username"));
+            cmdString.add("--username " + props.get("username"));
         }
 
         if (props.get("password") != null) {
-            cmd_string.add("--password " + props.get("password"));
+            cmdString.add("--password " + props.get("password"));
         }
 
         if (props.get("ca-path") != null) {
-            cmd_string.add("--ca-path " + props.get("ca-path"));
+            cmdString.add("--ca-path " + props.get("ca-path"));
         }
 
         if (props.get("ca-file") != null) {
-            cmd_string.add("--ca-file " + props.get("ca-file"));
+            cmdString.add("--ca-file " + props.get("ca-file"));
         }
 
         if (props.get("skip-ca-check") != null) {
-            cmd_string.add("--skip-ca-check " + props.get("skip-ca-check"));
+            cmdString.add("--skip-ca-check " + props.get("skip-ca-check"));
         }
 
         if (props.get("filter") != null) {
-            cmd_string.add("--filter " + props.get("filter"));
+            cmdString.add("--filter " + props.get("filter"));
         }
 
         if (props.get("user-cred") != null) {
-            cmd_string.add("--user-cred " + props.get("user-cred"));
+            cmdString.add("--user-cred " + props.get("user-cred"));
         }
 
         if (props.get("voms") != null) {
-            cmd_string.add("--voms");
+            cmdString.add("--voms");
         }
 
         if (props.get("media-type") != null) {
-            cmd_string.add("--media-type " + props.get("media-type"));
+            cmdString.add("--media-type " + props.get("media-type"));
         }
 
         if (props.get("resource") != null)
-            cmd_string.add("--resource " + props.get("resource"));
+            cmdString.add("--resource " + props.get("resource"));
 
         if (props.get("attributes") != null)
-            cmd_string.add("--attributes " + props.get("attributes"));
+            cmdString.add("--attributes " + props.get("attributes"));
 
         if (props.get("context") != null) {
-            cmd_string.add("--context " + props.get("context"));
+            cmdString.add("--context " + props.get("context"));
         }
 
         if (props.get("action") != null)
-            cmd_string.add("--action " + props.get("action"));
+            cmdString.add("--action " + props.get("action"));
 
         if (props.get("mixin") != null)
-            cmd_string.add("--mixin " + props.get("mixin"));
+            cmdString.add("--mixin " + props.get("mixin"));
 
         if (props.get("link") != null) {
-            cmd_string.add("--link " + props.get("link"));
+            cmdString.add("--link " + props.get("link"));
         }
 
         if (props.get("trigger-action") != null) {
-            cmd_string.add("--trigger-action " + props.get("trigger-action"));
+            cmdString.add("--trigger-action " + props.get("trigger-action"));
         }
 
         if (props.get("log-to") != null) {
-            cmd_string.add("--log-to " + props.get("log-to"));
+            cmdString.add("--log-to " + props.get("log-to"));
         }
 
-        cmd_string.add("--output-format json_extended_pretty");
+        cmdString.add("--output-format json_extended_pretty");
 
         if (props.get("dump-model") != null) {
-            cmd_string.add("--dump-model");
+            cmdString.add("--dump-model");
         }
 
         if (props.get("debug") != null) {
-            cmd_string.add("--debug");
+            cmdString.add("--debug");
         }
 
         if (props.get("verbose") != null) {
-            cmd_string.add("--verbose");
+            cmdString.add("--verbose");
         }
 
         // ROCCI connector parameters setup
@@ -157,14 +163,14 @@ public class ROCCI extends Connector {
             timeSlot = DEFAULT_TIME_SLOT;
         }
 
-        client = new RocciClient(cmd_string, attributes);
+        client = new RocciClient(cmdString, attributes);
     }
 
     @Override
-    public Object create(HardwareDescription hd, SoftwareDescription sd, HashMap<String, String> prop) throws ConnException {
+    public Object create(HardwareDescription hd, SoftwareDescription sd, Map<String, String> prop) throws ConnException {
         try {
             String instanceCode = hd.getImageType();
-            String vmId = client.create_compute(hd.getImageName(), instanceCode);   
+            String vmId = client.createCompute(hd.getImageName(), instanceCode);   
             
             VMID_TO_HARDWARE_REQUEST.put(vmId,  hd);
             VMID_TO_SOFTWARE_REQUEST.put(vmId,  sd);
@@ -194,21 +200,20 @@ public class ROCCI extends Connector {
                     throw new ConnException("Maximum VM creation time reached.");
                 }
                 polls++;
-                status = client.get_resource_status(vmId);
+                status = client.getResourceStatus(vmId);
             } catch (Exception e) {
                 errors++;
                 if (errors == MAX_ALLOWED_ERRORS) {
-                    // logger.error("ERROR_MSG = [\n\tError = " + e.getMessage() + "\n]");
                     logger.error("ERROR_MSG = [\n\tError = " + e.getMessage() + "\n]");
                     throw new ConnException("Error getting the status of the request");
                 }
             }
-        } while (status == null || !status.equals("active"));
+        } while (status == null || !"active".equals(status));
         
         // Retrieve IP
         String ip = null;
         try {
-            ip = client.get_resource_address(vmId);
+            ip = client.getResourceAddress(vmId);
         } catch (ConnClientException cce) {
             throw new ConnException("Error retrieving resource address from client", cce);
         }
@@ -245,7 +250,7 @@ public class ROCCI extends Connector {
         String vmId = (String) id;
         logger.info(" Destroy VM " + vmId + " with rOCCI connector");
         
-        client.delete_compute(vmId);
+        client.deleteCompute(vmId);
         VMID_TO_HARDWARE_REQUEST.remove(vmId);
         VMID_TO_SOFTWARE_REQUEST.remove(vmId);
     }
@@ -266,8 +271,8 @@ public class ROCCI extends Connector {
     }
     
     private void getHardwareInformation(String vmId, HardwareDescription hd) throws ConnClientException {
-        Object[] grantedHD = client.get_hardware_description(vmId);
-        // grantedHD is of the form {memSize, storageSize, cores, architecture, speed}
+        Object[] grantedHD = client.getHardwareDescription(vmId);
+        // grantedHD is of the form [memSize, storageSize, cores, architecture, speed]
         Float memory = (Float) grantedHD[0];
         Float storage = (Float) grantedHD[1];
         Integer cores = (Integer) grantedHD[2];
@@ -275,12 +280,12 @@ public class ROCCI extends Connector {
         Float speed = (Float) grantedHD[4];
         
         // Create a runtime processor
-        Processor runtime_proc = new es.bsc.conn.types.Processor();
-        runtime_proc.setComputingUnits(cores);
-        runtime_proc.setArchitecture(architecture);
-        runtime_proc.setSpeed(speed);
-        List<Processor> procs = new ArrayList<Processor>();
-        procs.add(runtime_proc);
+        Processor runtimeProc = new es.bsc.conn.types.Processor();
+        runtimeProc.setComputingUnits(cores);
+        runtimeProc.setArchitecture(architecture);
+        runtimeProc.setSpeed(speed);
+        List<Processor> procs = new ArrayList<>();
+        procs.add(runtimeProc);
     
         // Add Hardware information
         hd.setMemorySize(memory);

@@ -1,6 +1,5 @@
 package es.bsc.conn.types;
 
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -13,7 +12,7 @@ public class SoftwareDescription {
     protected String operatingSystemVersion = BasicTypes.UNASSIGNED_STR;
 
     // Applications
-    protected List<String> appSoftware = new LinkedList<String>();
+    protected List<String> appSoftware = new LinkedList<>();
 
 
     public SoftwareDescription() {
@@ -23,7 +22,7 @@ public class SoftwareDescription {
     }
 
     public SoftwareDescription(String operatingSystemType, String operatingSystemDistribution, String operatingSystemVersion,
-            String imageName, String imageType, HashMap<String, String> imageProperties, List<String> appSoftware) {
+            List<String> appSoftware) {
 
         this.operatingSystemType = operatingSystemType;
         this.operatingSystemDistribution = operatingSystemDistribution;

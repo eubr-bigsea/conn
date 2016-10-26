@@ -1,11 +1,13 @@
 package es.bsc.conn.vmm;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import es.bsc.conn.Connector;
+import es.bsc.conn.clients.exceptions.ConnClientException;
 import es.bsc.conn.clients.vmm.VMMClient;
 import es.bsc.conn.clients.vmm.types.VMDescription;
 import es.bsc.conn.exceptions.ConnException;
@@ -26,19 +28,19 @@ public class VMMConnector extends Connector {
     private static final long POLLING_INTERVAL = 5;
     private static final int TIMEOUT = 1_800;
 
-    private static final HashMap<String, HardwareDescription> VMID_TO_HARDWARE_REQUEST = new HashMap<String, HardwareDescription>();
-    private static final HashMap<String, SoftwareDescription> VMID_TO_SOFTWARE_REQUEST = new HashMap<String, SoftwareDescription>();
+    private static final HashMap<String, HardwareDescription> VMID_TO_HARDWARE_REQUEST = new HashMap<>();
+    private static final HashMap<String, SoftwareDescription> VMID_TO_SOFTWARE_REQUEST = new HashMap<>();
 
     private VMMClient client;
 
 
-    public VMMConnector(String providerName, HashMap<String, String> props) {
+    public VMMConnector(Map<String, String> props) throws ConnException {
         super(props);
         this.client = new VMMClient(props.get(ENDPOINT_PROP));
     }
 
     @Override
-    public Object create(HardwareDescription hd, SoftwareDescription sd, HashMap<String, String> prop) throws ConnException {
+    public Object create(HardwareDescription hd, SoftwareDescription sd, Map<String, String> prop) throws ConnException {
         try {
             String vmId = client.createVM(hd.getImageName(), hd.getTotalComputingUnits(), (int) (hd.getMemorySize() * 1_000),
                     (int) hd.getStorageSize());
@@ -48,9 +50,9 @@ public class VMMConnector extends Connector {
 
             VirtualResource vr = new VirtualResource(vmId, hd, sd, prop);
             return vr.getId();
-        } catch (Exception e) {
-            logger.error("Exception submitting vm creation", e);
-            throw new ConnException(e);
+        } catch (ConnClientException ce) {
+            logger.error("Exception submitting vm creation", ce);
+            throw new ConnException(ce);
         }
     }
 
@@ -75,11 +77,8 @@ public class VMMConnector extends Connector {
 
                 tries++;
 
-                try {
-                    Thread.sleep(POLLING_INTERVAL * 1_000);
-                } catch (InterruptedException e) {
-                    // No need to handle such exception
-                }
+                Thread.sleep(POLLING_INTERVAL * 1_000);
+                
                 vmd = client.getVMDescription(vmId);
             }
 
@@ -107,7 +106,7 @@ public class VMMConnector extends Connector {
             vr.setSd(sd);
 
             return vr;
-        } catch (Exception e) {
+        } catch (ConnClientException | InterruptedException e) {
             logger.error("Exception waiting for VM Creation");
             throw new ConnException(e);
         }
@@ -120,8 +119,8 @@ public class VMMConnector extends Connector {
             client.deleteVM(vmId);
             VMID_TO_HARDWARE_REQUEST.remove(vmId);
             VMID_TO_SOFTWARE_REQUEST.remove(vmId);
-        } catch (Exception e) {
-            logger.error("Exception waiting for VM Destruction");
+        } catch (ConnClientException cce) {
+            logger.error("Exception waiting for VM Destruction", cce);
         }
     }
 
@@ -137,7 +136,7 @@ public class VMMConnector extends Connector {
 
     @Override
     public void close() {
-        // Nothing to do;
+        // Nothing to do
     }
 
 }

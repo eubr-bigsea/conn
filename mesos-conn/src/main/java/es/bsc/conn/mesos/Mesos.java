@@ -35,10 +35,10 @@ public class Mesos extends Connector {
     private final Map<String, VirtualResource> resources;
 
 
-    public Mesos(HashMap<String, String> props) throws ConnException {
+    public Mesos(Map<String, String> props) throws ConnException {
         super(props);
         logger.info("Initializing MESOS Connector");
-        resources = new HashMap<String, VirtualResource>();
+        resources = new HashMap<>();
         try {
             framework = new MesosFramework(props);
         } catch (FrameworkException fe) {
@@ -55,13 +55,13 @@ public class Mesos extends Connector {
     }
 
     @Override
-    public Object create(HardwareDescription hd, SoftwareDescription sd, HashMap<String, String> prop) throws ConnException {
-        List<Resource> res = new LinkedList<Resource>();
+    public Object create(HardwareDescription hd, SoftwareDescription sd, Map<String, String> prop) throws ConnException {
+        List<Resource> res = new LinkedList<>();
         res.add(buildResource("cpus", hd.getTotalComputingUnits()));
         res.add(buildResource("mem", GIGAS_TO_MEGAS * hd.getMemorySize()));
         res.add(buildResource("disk", GIGAS_TO_MEGAS * hd.getStorageSize()));
 
-        String newId = (String) framework.requestWorker(res);
+        String newId = framework.requestWorker(res);
         resources.put(newId, new VirtualResource((String) newId, hd, sd, prop));
 
         return newId;
@@ -106,5 +106,5 @@ public class Mesos extends Connector {
     public void close() {
         framework.stop();
     }
-    
+
 }
