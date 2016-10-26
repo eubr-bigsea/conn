@@ -201,11 +201,11 @@ public class ROCCI extends Connector {
                 }
                 polls++;
                 status = client.getResourceStatus(vmId);
-            } catch (Exception e) {
+            } catch (ConnClientException | ConnException | InterruptedException e) {
                 errors++;
                 if (errors == MAX_ALLOWED_ERRORS) {
                     logger.error("ERROR_MSG = [\n\tError = " + e.getMessage() + "\n]");
-                    throw new ConnException("Error getting the status of the request");
+                    throw new ConnException("Error getting the status of the request", e);
                 }
             }
         } while (status == null || !"active".equals(status));
