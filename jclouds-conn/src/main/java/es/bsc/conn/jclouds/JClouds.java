@@ -180,7 +180,7 @@ public class JClouds extends Connector {
             }
             hd.setProcessors(procs);
             hd.setTotalComputingUnits(totalCores);
-            hd.setMemorySize(vmNodeMetadata.getHardware().getRam() / MB_TO_GB);
+            hd.setMemorySize(vmNodeMetadata.getHardware().getRam() / Float.valueOf(MB_TO_GB));
             float disk = getTotalDisk(vmNodeMetadata.getHardware().getVolumes());
             hd.setStorageSize(disk);
             vr.setHd(hd);
@@ -234,8 +234,8 @@ public class JClouds extends Connector {
         LOGGER.debug("Adding ssh inbound port");
         HashSet<Integer> ports = new HashSet<Integer>();
         ports.add(22);
-        int minPort = Integer.valueOf(hd.getImageProperties().get("adaptor-max-port"));
-        int maxPort = Integer.valueOf(hd.getImageProperties().get("adaptor-min-port"));
+        int minPort = Integer.parseInt(hd.getImageProperties().get("adaptor-max-port"));
+        int maxPort = Integer.parseInt(hd.getImageProperties().get("adaptor-min-port"));
         if (minPort > 0 && maxPort > 0) {
             for (int port = minPort; port < maxPort; ++port) {
                 LOGGER.debug("Adding inbound port:" + port);

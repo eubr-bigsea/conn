@@ -203,7 +203,7 @@ public class ROCCI extends Connector {
                     throw new ConnException("Error getting the status of the request");
                 }
             }
-        }  while (!status.equals("active"));
+        } while (status == null || !status.equals("active"));
         
         // Retrieve IP
         String ip = null;
