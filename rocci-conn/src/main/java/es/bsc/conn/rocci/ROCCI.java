@@ -195,7 +195,7 @@ public class ROCCI extends Connector {
         String status = null;
         do {
             try {
-                Thread.sleep(RETRY_TIME * 1_000);
+                Thread.sleep(RETRY_TIME * (long)1_000);
                 if (RETRY_TIME * polls >= MAX_VM_CREATION_TIME * 60) {
                     throw new ConnException("Maximum VM creation time reached.");
                 }
