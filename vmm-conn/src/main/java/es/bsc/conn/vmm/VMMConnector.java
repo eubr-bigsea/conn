@@ -43,7 +43,7 @@ public class VMMConnector extends Connector {
     public Object create(HardwareDescription hd, SoftwareDescription sd, Map<String, String> prop) throws ConnException {
         try {
             String vmId = client.createVM(hd.getImageName(), hd.getTotalComputingUnits(), (int) (hd.getMemorySize() * 1_000),
-                    (int) hd.getStorageSize());
+                    (int) hd.getStorageSize(), true);
 
             VMID_TO_HARDWARE_REQUEST.put(vmId, hd);
             VMID_TO_SOFTWARE_REQUEST.put(vmId, sd);
