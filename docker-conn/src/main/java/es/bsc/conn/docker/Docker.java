@@ -91,7 +91,7 @@ public class Docker extends Connector {
             return containerId;
         } catch (Exception e) {
             String err = "There was an error creating the container '" + appName + "': " + e.getMessage();
-            throw new ConnException(err);
+            throw new ConnException(err, e);
         }
     }
 

@@ -28,7 +28,7 @@ public class ROCCI extends Connector {
     private static final String PROP_AUTH = "auth";
     private static final String PROP_TIMEOUT = "timeout";
     private static final String PROP_USERNAME = "username";
-    private static final String PROP_PASSWORD = "password";
+    private static final String PROP_PASSW = "password";
     private static final String PROP_CA_PATH = "ca-path";
     private static final String PROP_CA_FILE = "ca-file";
     private static final String PROP_SKIP_CA_CHECK = "skip-ca-check";
@@ -55,7 +55,7 @@ public class ROCCI extends Connector {
     private static final String ROCCI_PROP_AUTH = "--auth ";
     private static final String ROCCI_PROP_TIMEOUT = "--timeout ";
     private static final String ROCCI_PROP_USERNAME = "--username ";
-    private static final String ROCCI_PROP_PASSWORD = "--password ";
+    private static final String ROCCI_PROP_PASSW = "--password ";
     private static final String ROCCI_PROP_CA_PATH = "--ca-path ";
     private static final String ROCCI_PROP_CA_FILE = "--ca-file ";
     private static final String ROCCI_PROP_SKIP_CA_CHECK = "--skip-ca-check ";
@@ -122,9 +122,9 @@ public class ROCCI extends Connector {
             cmdString.add(ROCCI_PROP_USERNAME + propUsername);
         }
 
-        String propPassword = props.get(PROP_PASSWORD);
+        String propPassword = props.get(PROP_PASSW);
         if (propPassword != null) {
-            cmdString.add(ROCCI_PROP_PASSWORD + propPassword);
+            cmdString.add(ROCCI_PROP_PASSW + propPassword);
         }
 
         String propCAPath = props.get(PROP_CA_PATH);
