@@ -114,7 +114,7 @@ public class Docker extends Connector {
         VirtualResource vr = new VirtualResource();
         vr.setId(containerId);
         vr.setIp(ip);
-        HashMap<String, String> providerProperties = new HashMap<String, String>();
+        HashMap<String, String> providerProperties = new HashMap<>();
         providerProperties.put(PROP_PROVIDER_USER, IMAGE_USERNAME);
         providerProperties.put(PROP_VM_USER, IMAGE_USERNAME);
         vr.setProperties(providerProperties);
