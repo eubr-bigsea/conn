@@ -108,7 +108,7 @@ public abstract class Connector {
         String propMaxVMCreationTime = props.get(PROP_MAX_VM_CREATION_TIME);
         if (propMaxVMCreationTime != null && !propMaxVMCreationTime.isEmpty()) {
             // Move from seconds to minutes
-            maxVMCreationTime = Long.parseLong(propTimeSlot) / SENCONDS_TO_MINUTES;
+            maxVMCreationTime = Long.parseLong(propMaxVMCreationTime) / SENCONDS_TO_MINUTES;
         } else {
             maxVMCreationTime = DEFAULT_VM_CREATION_TIME;
         }
