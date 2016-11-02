@@ -16,9 +16,13 @@ import org.apache.logging.log4j.Logger;
 
 public class Dummy extends Connector {
 
+    // Logger
     private static final Logger LOGGER = LogManager.getLogger(Loggers.DUMMY);
 
-    private static AtomicInteger nextId = new AtomicInteger(100);
+    // ID
+    private static final int BASE_ID = 100;
+    private static final String BASE_IP = "127.0.0.";
+    private static AtomicInteger nextId = new AtomicInteger(BASE_ID);
 
 
     public Dummy(Map<String, String> props) throws ConnException {
@@ -48,7 +52,7 @@ public class Dummy extends Connector {
         LOGGER.info("Waiting VirtualResource " + id);
         VirtualResource vr = new VirtualResource();
         vr.setId(id);
-        vr.setIp("127.0.0." + nextId.getAndIncrement());
+        vr.setIp(BASE_IP + nextId.getAndIncrement());
 
         return vr;
     }
@@ -56,12 +60,6 @@ public class Dummy extends Connector {
     @Override
     public void destroy(Object id) {
         LOGGER.info("Deleting VirtualResource " + id);
-    }
-
-    @Override
-    public long getTimeSlot() {
-        LOGGER.info("Getting time slot");
-        return 1;
     }
 
     @Override

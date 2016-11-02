@@ -35,31 +35,37 @@ import es.bsc.conn.types.VirtualResource;
 
 public class JClouds extends Connector {
 
-    private static final Logger LOGGER = LogManager.getLogger(Loggers.JCLOUDS);
+    // Properties' names
+    private static final String PROP_PROVIDER = "provider";
+    private static final String PROP_PROVIDER_USER = "provider-user";
+    private static final String PROP_PROVIDER_USER_CRED = "provider-user-credential";
+    private static final String PROP_IP_INDEX = "ip-index";
 
+    // Conversion units
     private static final int MS_TO_S = 1_000;
     private static final int MB_TO_GB = 1_024;
+
+    // Time/ip properties
     private static final long POLLING_INTERVAL = 5;
     private static final int TIMEOUT = 1_800;
     private static final int DEFAULT_IP_INDEX = 0;
-    private int ipIndex = DEFAULT_IP_INDEX;
-    
-    private static final String COMPSS_APP_NAME_PROPERTY = "IT_APP_NAME";
-    private static final String DEFAULT_APP_NAME = "default-app";
-    private static final String APP_NAME = System.getProperty(COMPSS_APP_NAME_PROPERTY).isEmpty() ?
-            DEFAULT_APP_NAME : System.getProperty(COMPSS_APP_NAME_PROPERTY);
-    
-    private static final HashMap<String, HardwareDescription> VMID_TO_HARDWARE_REQUEST = new HashMap<>();
-    private static final HashMap<String, SoftwareDescription> VMID_TO_SOFTWARE_REQUEST = new HashMap<>();
-    
-    private final JCloudsClient jcloudsClient;
+
+    // Logger
+    private static final Logger LOGGER = LogManager.getLogger(Loggers.JCLOUDS);
+
+    // Properties values
     private final String provider;
-    private final String server;
-    private final String user;
-    private final String credential;
-    private final String keyPairLocation;
-    private final String keyPairName;
-    private final long timeSlot;    
+    private final String providerUser;
+    private final String providerUserCred;
+    private final int ipIndex;
+
+    // Client
+    private final JCloudsClient jcloudsClient;
+
+    // Information about requests
+    private final Map<String, HardwareDescription> vmidToHardwareRequest = new HashMap<>();
+    private final Map<String, SoftwareDescription> vmidToSoftwareRequest = new HashMap<>();
+
 
     /**
      * Initializes the JClouds connector with the given properties
@@ -68,48 +74,32 @@ public class JClouds extends Connector {
      */
     public JClouds(Map<String, String> props) throws ConnException {
         super(props);
-        
-        server = props.get("Server");
 
-        provider = props.get("provider");
+        // JClouds client parameters setup
+        provider = props.get(PROP_PROVIDER);
         if (provider == null) {
             throw new ConnException("Provider must be specified with \"provider\" property");
         }
-        
-        user = props.get("provider-user");
-        if (user == null) {
+
+        providerUser = props.get(PROP_PROVIDER_USER);
+        if (providerUser == null) {
             throw new ConnException("Provider user must be specified with \"provider-user\" property");
         }
-        
-        credential = props.get("provider-user-credential");
-        if (credential == null) {
+
+        providerUserCred = props.get(PROP_PROVIDER_USER_CRED);
+        if (providerUserCred == null) {
             throw new ConnException("Provider user credential must be specified with \"provider-user-credential\" property");
         }
-        
-        String time = props.get("time-slot");
-        if (time != null) {
-            timeSlot = Integer.parseInt(time) * (long)MS_TO_S;
-        } else {
-            throw new ConnException("Provider billing time-slot must be specified with \"time-slot\" property");
-        }
-        
-        String index = props.get("ip-index");
+
+        String index = props.get(PROP_IP_INDEX);
         if (index != null) {
             ipIndex = Integer.parseInt(index);
-        }
-        
-        keyPairName = props.get("vm-keypair-name");
-        if (keyPairName == null) {
-            throw new ConnException("Provider keypair name must be specified with \"vm-keypair-name\" property");
-        }
-        
-        keyPairLocation = props.get("vm-keypair-location");
-        if (keyPairLocation == null) {
-            throw new ConnException("Provider keypair location must be specified with \"vm-keypair-location\" property");
+        } else {
+            ipIndex = DEFAULT_IP_INDEX;
         }
 
         try {
-            jcloudsClient = new JCloudsClient(user, credential, provider, server);
+            jcloudsClient = new JCloudsClient(providerUser, providerUserCred, provider, server);
         } catch (ConnClientException cce) {
             throw new ConnException("Exception creating client", cce);
         }
@@ -119,12 +109,12 @@ public class JClouds extends Connector {
     public Object create(HardwareDescription hd, SoftwareDescription sd, Map<String, String> prop) throws ConnException {
         try {
             Template template = generateTemplate(hd);
-            Set<? extends NodeMetadata> vms = jcloudsClient.createVMS(APP_NAME, 1, template);
-            
+            Set<? extends NodeMetadata> vms = jcloudsClient.createVMS(appName, 1, template);
+
             String vmId = vms.iterator().next().getId();
-            VMID_TO_HARDWARE_REQUEST.put(vmId, hd);
-            VMID_TO_SOFTWARE_REQUEST.put(vmId, sd);
-            
+            vmidToHardwareRequest.put(vmId, hd);
+            vmidToSoftwareRequest.put(vmId, sd);
+
             return vmId;
         } catch (RunNodesException | IOException e) {
             throw new ConnException(e);
@@ -155,18 +145,18 @@ public class JClouds extends Connector {
                 vmNodeMetadata = jcloudsClient.getNode(vmId);
             }
             String ip = getIp(vmNodeMetadata);
-            
+
             // Create Virtual Resource
             VirtualResource vr = new VirtualResource();
             vr.setId(vmId);
             vr.setIp(ip);
             vr.setProperties(null);
 
-            HardwareDescription hd = VMID_TO_HARDWARE_REQUEST.get(vmId);
+            HardwareDescription hd = vmidToHardwareRequest.get(vmId);
             if (hd == null) {
                 throw new ConnException("Unregistered hardware description for vmId = " + vmId);
             }
-            
+
             List<es.bsc.conn.types.Processor> procs = new ArrayList<>();
             int totalCores = 0;
             for (Processor p : vmNodeMetadata.getHardware().getProcessors()) {
@@ -184,7 +174,7 @@ public class JClouds extends Connector {
             hd.setStorageSize(disk);
             vr.setHd(hd);
 
-            SoftwareDescription sd = VMID_TO_SOFTWARE_REQUEST.get(vmId);
+            SoftwareDescription sd = vmidToSoftwareRequest.get(vmId);
             if (sd == null) {
                 throw new ConnException("Unregistered software description for vmId = " + vmId);
             }
@@ -201,17 +191,12 @@ public class JClouds extends Connector {
     @Override
     public void destroy(Object id) {
         String vmId = (String) id;
-        
+
         jcloudsClient.destroyNode(vmId);
-        VMID_TO_HARDWARE_REQUEST.remove(vmId);
-        VMID_TO_SOFTWARE_REQUEST.remove(vmId);
+        vmidToHardwareRequest.remove(vmId);
+        vmidToSoftwareRequest.remove(vmId);
     }
 
-    @Override
-    public long getTimeSlot() {
-        return timeSlot;
-    }
-    
     @Override
     public float getPriceSlot(VirtualResource virtualResource) {
         return virtualResource.getHd().getPricePerUnit();
@@ -224,8 +209,8 @@ public class JClouds extends Connector {
 
     private Template generateTemplate(HardwareDescription hd) throws IOException {
         TemplateOptions to = new TemplateOptions();
-        
-        String key = keyPairLocation + keyPairName;
+
+        String key = keypairLoc + keypairName;
         LOGGER.debug("Authorizing keys :" + key);
         to.authorizePublicKey(Files.toString(new File(key + ".pub"), UTF_8));
         to.overrideLoginPrivateKey(Files.toString(new File(key), UTF_8));

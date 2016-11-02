@@ -22,21 +22,29 @@ import org.apache.mesos.Protos.Value;
 
 public class Mesos extends Connector {
 
-    private static final Logger logger = LogManager.getLogger(Loggers.MESOS);
+    // Properties' names
+    private static final String PROP_CPUS = "cpus";
+    private static final String PROP_MEM = "mem";
+    private static final String PROP_DISK = "disk";
+    private static final String PROP_PRICE = "price";
 
-    private static final long DEFAULT_TIME_SLOT = 300_000L;
+    // Conversion constants
     private static final double GIGAS_TO_MEGAS = 1024.0;
     private static final String UNDEFINED_IP = "-1.-1.-1.-1";
 
-    private long timeSlot = DEFAULT_TIME_SLOT;
+    // Logger
+    private static final Logger logger = LogManager.getLogger(Loggers.MESOS);
 
+    // Mesos Framework Client
     private final MesosFramework framework;
 
+    // Information about resources
     private final Map<String, VirtualResource> resources;
 
 
     public Mesos(Map<String, String> props) throws ConnException {
         super(props);
+
         logger.info("Initializing MESOS Connector");
         resources = new HashMap<>();
         try {
@@ -57,9 +65,9 @@ public class Mesos extends Connector {
     @Override
     public Object create(HardwareDescription hd, SoftwareDescription sd, Map<String, String> prop) throws ConnException {
         List<Resource> res = new LinkedList<>();
-        res.add(buildResource("cpus", hd.getTotalComputingUnits()));
-        res.add(buildResource("mem", GIGAS_TO_MEGAS * hd.getMemorySize()));
-        res.add(buildResource("disk", GIGAS_TO_MEGAS * hd.getStorageSize()));
+        res.add(buildResource(PROP_CPUS, hd.getTotalComputingUnits()));
+        res.add(buildResource(PROP_MEM, GIGAS_TO_MEGAS * hd.getMemorySize()));
+        res.add(buildResource(PROP_DISK, GIGAS_TO_MEGAS * hd.getStorageSize()));
 
         String newId = framework.requestWorker(res);
         resources.put(newId, new VirtualResource((String) newId, hd, sd, prop));
@@ -84,15 +92,10 @@ public class Mesos extends Connector {
 
     @Override
     public float getPriceSlot(VirtualResource vr) {
-        if (vr.getProperties().containsKey("price")) {
-            return Float.parseFloat(vr.getProperties().get("price"));
+        if (vr.getProperties().containsKey(PROP_PRICE)) {
+            return Float.parseFloat(vr.getProperties().get(PROP_PRICE));
         }
         return 0.0f;
-    }
-
-    @Override
-    public long getTimeSlot() {
-        return timeSlot;
     }
 
     @Override

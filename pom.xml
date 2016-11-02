@@ -28,7 +28,7 @@
 	<!-- PROPERTIES -->
 	<properties>
 		<!-- CONN CLIENTS VERSION -->
-		<conn-clients.version>1.0-12</conn-clients.version>
+		<conn-clients.version>1.0-14</conn-clients.version>
 
 		<!-- JUnit version -->
 		<junit.version>4.12</junit.version>
@@ -169,6 +169,7 @@
 	<modules>
 		<module>commons-conn</module>
 		<module>dummy-conn</module>
+                <module>docker-conn</module>
 		<module>rocci-conn</module>
 		<module>mesos-conn</module>
 		<module>jclouds-conn</module>

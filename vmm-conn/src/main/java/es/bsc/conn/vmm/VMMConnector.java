@@ -19,24 +19,26 @@ import es.bsc.conn.types.VirtualResource;
 
 public class VMMConnector extends Connector {
 
-    private static final Logger logger = LogManager.getLogger(Loggers.VMM);
-
-    private static final String ENDPOINT_PROP = "Server";
+    // Constants
     private static final String ACTIVE = "ACTIVE";
     private static final String ERROR = "ERROR";
-
     private static final long POLLING_INTERVAL = 5;
     private static final int TIMEOUT = 1_800;
 
-    private static final HashMap<String, HardwareDescription> VMID_TO_HARDWARE_REQUEST = new HashMap<>();
-    private static final HashMap<String, SoftwareDescription> VMID_TO_SOFTWARE_REQUEST = new HashMap<>();
+    // Logger
+    private static final Logger logger = LogManager.getLogger(Loggers.VMM);
 
+    // VMM Client
     private VMMClient client;
+
+    // Information about requests
+    private final Map<String, HardwareDescription> vmidToHardwareRequest = new HashMap<>();
+    private final Map<String, SoftwareDescription> vmidToSoftwareRequest = new HashMap<>();
 
 
     public VMMConnector(Map<String, String> props) throws ConnException {
         super(props);
-        this.client = new VMMClient(props.get(ENDPOINT_PROP));
+        this.client = new VMMClient(server);
     }
 
     @Override
@@ -45,8 +47,8 @@ public class VMMConnector extends Connector {
             String vmId = client.createVM(hd.getImageName(), hd.getTotalComputingUnits(), (int) (hd.getMemorySize() * 1_000),
                     (int) hd.getStorageSize(), true);
 
-            VMID_TO_HARDWARE_REQUEST.put(vmId, hd);
-            VMID_TO_SOFTWARE_REQUEST.put(vmId, sd);
+            vmidToHardwareRequest.put(vmId, hd);
+            vmidToSoftwareRequest.put(vmId, sd);
 
             VirtualResource vr = new VirtualResource(vmId, hd, sd, prop);
             return vr.getId();
@@ -78,7 +80,7 @@ public class VMMConnector extends Connector {
                 tries++;
 
                 Thread.sleep(POLLING_INTERVAL * 1_000);
-                
+
                 vmd = client.getVMDescription(vmId);
             }
 
@@ -88,7 +90,7 @@ public class VMMConnector extends Connector {
             vr.setIp(vmd.getIpAddress());
             vr.setProperties(null);
 
-            HardwareDescription hd = VMID_TO_HARDWARE_REQUEST.get(vmId);
+            HardwareDescription hd = vmidToHardwareRequest.get(vmId);
             if (hd == null) {
                 throw new ConnException("Unregistered hardware description for vmId = " + vmId);
             }
@@ -98,7 +100,7 @@ public class VMMConnector extends Connector {
             hd.setImageName(vmd.getImage());
             vr.setHd(hd);
 
-            SoftwareDescription sd = VMID_TO_SOFTWARE_REQUEST.get(vmId);
+            SoftwareDescription sd = vmidToSoftwareRequest.get(vmId);
             if (sd == null) {
                 throw new ConnException("Unregistered software description for vmId = " + vmId);
             }
@@ -117,16 +119,11 @@ public class VMMConnector extends Connector {
         String vmId = (String) id;
         try {
             client.deleteVM(vmId);
-            VMID_TO_HARDWARE_REQUEST.remove(vmId);
-            VMID_TO_SOFTWARE_REQUEST.remove(vmId);
+            vmidToHardwareRequest.remove(vmId);
+            vmidToSoftwareRequest.remove(vmId);
         } catch (ConnClientException cce) {
             logger.error("Exception waiting for VM Destruction", cce);
         }
-    }
-
-    @Override
-    public long getTimeSlot() {
-        return 0;
     }
 
     @Override
