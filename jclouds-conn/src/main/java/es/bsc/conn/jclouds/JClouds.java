@@ -219,6 +219,19 @@ public class JClouds extends Connector {
         LOGGER.debug("Adding ssh inbound port");
         HashSet<Integer> ports = new HashSet<>();
         ports.add(SSH_DEFAULT_PORT);
+        
+        // Add Adaptor Ports
+        int adaptorMaxPort = DEFAULT_MAX_PORT;
+        String propAdaptorMaxPort = hd.getImageProperties().get(PROP_ADAPTOR_MAX_PORT);
+        if (propAdaptorMaxPort != null && !propAdaptorMaxPort.isEmpty()) {
+            adaptorMaxPort = Integer.parseInt(propAdaptorMaxPort);
+        }
+        int adaptorMinPort = DEFAULT_MIN_PORT;
+        String propAdaptorMinPort = hd.getImageProperties().get(PROP_ADAPTOR_MIN_PORT);
+        if (propAdaptorMinPort != null && !propAdaptorMinPort.isEmpty()) {
+            adaptorMinPort = Integer.parseInt(propAdaptorMinPort);
+        }
+        
         if (adaptorMaxPort > 0 && adaptorMinPort > 0) {
             for (int port = adaptorMinPort; port < adaptorMaxPort; ++port) {
                 LOGGER.debug("Adding inbound port:" + port);

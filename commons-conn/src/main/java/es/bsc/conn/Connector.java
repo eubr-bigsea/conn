@@ -39,8 +39,6 @@ public abstract class Connector {
     protected final String appName;
     protected final String server;
     protected final long timeSlot;
-    protected final int adaptorMaxPort;
-    protected final int adaptorMinPort;
     protected final String keypairName;
     protected final String keypairLoc;
     protected final long maxVMCreationTime;
@@ -75,20 +73,6 @@ public abstract class Connector {
             timeSlot = Long.parseLong(propTimeSlot) / SENCONDS_TO_MINUTES;
         } else {
             timeSlot = DEFAULT_TIME_SLOT;
-        }
-
-        String propAdaptorMaxPort = props.get(PROP_ADAPTOR_MAX_PORT);
-        if (propAdaptorMaxPort != null && !propAdaptorMaxPort.isEmpty()) {
-            adaptorMaxPort = Integer.parseInt(propAdaptorMaxPort);
-        } else {
-            adaptorMaxPort = DEFAULT_MAX_PORT;
-        }
-
-        String propAdaptorMinPort = props.get(PROP_ADAPTOR_MIN_PORT);
-        if (propAdaptorMinPort != null && !propAdaptorMinPort.isEmpty()) {
-            adaptorMinPort = Integer.parseInt(propAdaptorMinPort);
-        } else {
-            adaptorMinPort = DEFAULT_MIN_PORT;
         }
 
         String propKeypairName = props.get(PROP_KEYPAIR_NAME);
