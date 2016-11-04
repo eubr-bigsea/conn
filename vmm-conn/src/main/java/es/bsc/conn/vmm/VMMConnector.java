@@ -36,6 +36,12 @@ public class VMMConnector extends Connector {
     private final Map<String, SoftwareDescription> vmidToSoftwareRequest = new HashMap<>();
 
 
+    /**
+     * Initializes the VMM connector with the given properties
+     * 
+     * @param props
+     * @throws ConnException
+     */
     public VMMConnector(Map<String, String> props) throws ConnException {
         super(props);
         this.client = new VMMClient(server);

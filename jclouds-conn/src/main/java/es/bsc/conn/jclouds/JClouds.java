@@ -40,9 +40,6 @@ public class JClouds extends Connector {
     private static final String PROP_PROVIDER_USER = "provider-user";
     private static final String PROP_PROVIDER_USER_CRED = "provider-user-credential";
     private static final String PROP_IP_INDEX = "ip-index";
-    private static final String PROP_ADAPTOR_MAX_PORT = "adaptor-max-port";
-    private static final String PROP_ADAPTOR_MIN_PORT = "adaptor-min-port";
-    
     private static final int SSH_DEFAULT_PORT = 22;
 
     // Conversion units
@@ -222,10 +219,8 @@ public class JClouds extends Connector {
         LOGGER.debug("Adding ssh inbound port");
         HashSet<Integer> ports = new HashSet<>();
         ports.add(SSH_DEFAULT_PORT);
-        int minPort = Integer.parseInt(hd.getImageProperties().get(PROP_ADAPTOR_MIN_PORT));
-        int maxPort = Integer.parseInt(hd.getImageProperties().get(PROP_ADAPTOR_MAX_PORT));
-        if (minPort > 0 && maxPort > 0) {
-            for (int port = minPort; port < maxPort; ++port) {
+        if (adaptorMaxPort > 0 && adaptorMinPort > 0) {
+            for (int port = adaptorMinPort; port < adaptorMaxPort; ++port) {
                 LOGGER.debug("Adding inbound port:" + port);
                 ports.add(port);
             }

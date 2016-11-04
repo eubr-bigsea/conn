@@ -8,6 +8,10 @@ public class NonInstantiableException extends RuntimeException {
     private static final long serialVersionUID = 2L;
 
 
+    /**
+     * Instantiates a new exception with a given non-instantiable class name
+     * @param className
+     */
     public NonInstantiableException(String className) {
         super("Class " + className + " can not be instantiated.");
     }

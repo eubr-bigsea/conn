@@ -52,6 +52,12 @@ public class Docker extends Connector {
     private final Map<String, SoftwareDescription> containeridToSoftwareRequest = new HashMap<>();
 
 
+    /**
+     * Initializes the Docker connector with the given properties
+     * 
+     * @param props
+     * @throws ConnException
+     */
     public Docker(Map<String, String> props) throws ConnException {
         super(props);
 

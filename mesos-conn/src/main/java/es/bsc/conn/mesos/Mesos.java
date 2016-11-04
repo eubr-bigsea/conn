@@ -42,6 +42,12 @@ public class Mesos extends Connector {
     private final Map<String, VirtualResource> resources;
 
 
+    /**
+     * Initializes the MESOS connector with the given properties
+     * 
+     * @param props
+     * @throws ConnException
+     */
     public Mesos(Map<String, String> props) throws ConnException {
         super(props);
 

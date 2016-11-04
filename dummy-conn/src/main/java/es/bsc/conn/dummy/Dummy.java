@@ -25,6 +25,12 @@ public class Dummy extends Connector {
     private static AtomicInteger nextId = new AtomicInteger(BASE_ID);
 
 
+    /**
+     * Initializes the Dummy connector with the given properties
+     * 
+     * @param props
+     * @throws ConnException
+     */
     public Dummy(Map<String, String> props) throws ConnException {
         super(props);
     }
