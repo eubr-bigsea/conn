@@ -40,8 +40,6 @@ public class Docker extends Connector {
     private static final String PROP_HTTPS = "https";
     private static final String PROP_HTTP = "http";
     private static final String PROP_TCP = "tcp";
-    private static final int NUM_NIO_PORTS = 1_100;
-    private static final int NIO_BASE_PORT = 43_000;
     private static final int SSH_PORT = 22;
 
     // This is the user of all the compss:compss base images
