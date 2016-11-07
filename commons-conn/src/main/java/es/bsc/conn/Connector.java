@@ -21,27 +21,28 @@ public abstract class Connector {
     protected static final String PROP_MAX_VM_CREATION_TIME = "max-vm-creation-time";
     protected static final String PROP_MAX_CONNECTION_ERRORS = "max-connection-errors";
 
+    // Constants
+    protected static final long MIN_TO_S = 60;
+    protected static final long S_TO_MS = 1_000;
+    
     // Properties' default values
     protected static final String DEFAULT_APP_NAME = "default-app";
     protected static final String DEFAULT_SERVER = null;
-    protected static final long DEFAULT_TIME_SLOT = 5; // Minutes
+    protected static final long DEFAULT_TIME_SLOT = 5 * MIN_TO_S * S_TO_MS; // MS
     protected static final int DEFAULT_MAX_PORT = -1;
     protected static final int DEFAULT_MIN_PORT = -1;
     protected static final String DEFAULT_KEYPAIR_NAME = "";
     protected static final String DEFAULT_KEYPAIR_LOC = "";
-    protected static final long DEFAULT_VM_CREATION_TIME = 10; // Minutes
+    protected static final long DEFAULT_VM_CREATION_TIME = 10 * MIN_TO_S * S_TO_MS; // MS
     protected static final int DEFAULT_VM_CONNECTION_ERRORS = 3; // Number of maximum errors
-    
-    // Constants
-    protected static final int SENCONDS_TO_MINUTES = 60;
 
     // Properties
     protected final String appName;
     protected final String server;
-    protected final long timeSlot;
+    protected final long timeSlot; // MS
     protected final String keypairName;
     protected final String keypairLoc;
-    protected final long maxVMCreationTime;
+    protected final long maxVMCreationTime; // MS
     protected final int maxVMConnectionErrors;
 
 
@@ -70,7 +71,7 @@ public abstract class Connector {
         String propTimeSlot = props.get(PROP_TIME_SLOT);
         if (propTimeSlot != null && !propTimeSlot.isEmpty()) {
             // Move from Seconds to Minutes
-            timeSlot = Long.parseLong(propTimeSlot) / SENCONDS_TO_MINUTES;
+            timeSlot = Long.parseLong(propTimeSlot) * MIN_TO_S * S_TO_MS;
         } else {
             timeSlot = DEFAULT_TIME_SLOT;
         }
@@ -92,7 +93,7 @@ public abstract class Connector {
         String propMaxVMCreationTime = props.get(PROP_MAX_VM_CREATION_TIME);
         if (propMaxVMCreationTime != null && !propMaxVMCreationTime.isEmpty()) {
             // Move from seconds to minutes
-            maxVMCreationTime = Long.parseLong(propMaxVMCreationTime) / SENCONDS_TO_MINUTES;
+            maxVMCreationTime = Long.parseLong(propMaxVMCreationTime) * MIN_TO_S * S_TO_MS;
         } else {
             maxVMCreationTime = DEFAULT_VM_CREATION_TIME;
         }
