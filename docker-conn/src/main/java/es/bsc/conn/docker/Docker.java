@@ -9,8 +9,12 @@ import es.bsc.conn.types.HardwareDescription;
 import es.bsc.conn.types.SoftwareDescription;
 import es.bsc.conn.types.VirtualResource;
 
+import java.util.HashSet;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
+
+import com.google.common.primitives.Ints;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -26,6 +30,8 @@ public class Docker extends Connector {
     // Properties' names
     private static final String PROP_PROVIDER_USER = "provider-user";
     private static final String PROP_VM_USER = "vm-user";
+    private static final String PROP_ADAPTOR_MIN_PORT = "adaptor-min-port";
+    private static final String PROP_ADAPTOR_MAX_PORT = "adaptor-max-port";
 
     // Open ssh daemon and wait for Master commands
     private static final String[] WORKER_CMD = { "/usr/sbin/sshd", "-D" };
@@ -54,7 +60,7 @@ public class Docker extends Connector {
 
     /**
      * Initializes the Docker connector with the given properties
-     * 
+     *
      * @param props
      * @throws ConnException
      */
@@ -79,15 +85,18 @@ public class Docker extends Connector {
 
     @Override
     public Object create(HardwareDescription hd, SoftwareDescription sd, Map<String, String> prop) throws ConnException {
-        try {
-            int[] exposedPorts = new int[NUM_NIO_PORTS + 1];
-            for (int i = 0; i < NUM_NIO_PORTS; ++i) {
-                exposedPorts[i] = NIO_BASE_PORT + i;
-            }
-            exposedPorts[NUM_NIO_PORTS] = SSH_PORT; // SSH
+        // Add Adaptor Ports
+        int adaptorMinPort = Integer.parseInt(getProperty(hd.getImageProperties(),
+                PROP_ADAPTOR_MIN_PORT, Integer.toString(DEFAULT_MIN_PORT)));
+        int adaptorMaxPort = Integer.parseInt(getProperty(hd.getImageProperties(),
+                PROP_ADAPTOR_MAX_PORT, Integer.toString(DEFAULT_MAX_PORT)));
 
-            String containerId = dockerClient.createContainer(hd.getImageName(), appName, exposedPorts, hd.getTotalComputingUnits(),
-                    hd.getMemorySize(), WORKER_CMD);
+        int[] exposedPorts = portsToExpose(adaptorMinPort, adaptorMaxPort);
+
+        String containerName = appName + '-' + UUID.randomUUID().toString();
+        try {
+            String containerId = dockerClient.createContainer(hd.getImageName(), containerName,
+                    exposedPorts, hd.getTotalComputingUnits(), hd.getMemorySize(), WORKER_CMD);
 
             dockerClient.startContainer(containerId);
 
@@ -96,7 +105,7 @@ public class Docker extends Connector {
 
             return containerId;
         } catch (Exception e) {
-            String err = "There was an error creating the container '" + appName + "': " + e.getMessage();
+            String err = "There was an error creating the container '" + containerName + "': " + e.getMessage();
             throw new ConnException(err, e);
         }
     }
@@ -166,6 +175,24 @@ public class Docker extends Connector {
         dockerClient.removeAllContainers();
     }
 
+    private int[] portsToExpose(int minPort, int maxPort) {
+        HashSet<Integer> ports = new HashSet<>();
+        ports.add(SSH_PORT);
+
+        if (minPort > 0 && maxPort > 0) {
+            for (int port = minPort; port < maxPort; ++port) {
+                LOGGER.debug("Adding inbound port:" + port);
+                ports.add(port);
+            }
+        }
+        return Ints.toArray(ports);
+    }
+
+    private String getProperty(Map<String, String> props, String property, String defaultValue) {
+        String value = props.get(property);
+        return (value != null && !value.isEmpty())? value: defaultValue;
+    }
+
     private void getHardwareInformation(String containerId, HardwareDescription hd) throws ConnClientException {
         // In the Docker old version this code was:
 
@@ -175,7 +202,7 @@ public class Docker extends Connector {
         /*
          * for (ApplicationPackage ap : imageDescription.getPackages()) { if (ap.getSource().endsWith("COMPSs.tar.gz"))
          * { imageDescription.getPackages().remove(ap); } }
-         * 
+         *
          * imageDescription.getConfig().setUser(IMAGE_USERNAME); imageDescription.getConfig().setAppDir(IMAGE_APP_DIR);
          */
     }

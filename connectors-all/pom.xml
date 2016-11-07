@@ -50,6 +50,11 @@
 		</dependency>
 		<dependency>
 			<groupId>es.bsc</groupId>
+			<artifactId>docker-conn</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>es.bsc</groupId>
 			<artifactId>jclouds-conn</artifactId>
 			<version>${project.version}</version>
 		</dependency>
@@ -58,10 +63,5 @@
 			<artifactId>vmm-conn</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		<dependency>
-                        <groupId>es.bsc</groupId>
-                        <artifactId>docker-conn</artifactId>
-                        <version>${project.version}</version>
-                </dependency>
 	</dependencies>
 </project>
