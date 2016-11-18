@@ -17,7 +17,10 @@ import es.bsc.conn.types.HardwareDescription;
 import es.bsc.conn.types.SoftwareDescription;
 import es.bsc.conn.types.VirtualResource;
 
-
+/**
+ * Implementation of VMM Connector
+ *
+ */
 public class VMMConnector extends Connector {
 
     // Constants

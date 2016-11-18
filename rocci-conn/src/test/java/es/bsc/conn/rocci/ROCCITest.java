@@ -9,11 +9,17 @@ import java.util.HashMap;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.junit.Test;
 
 
 public class ROCCITest {
     
     private static final Logger LOGGER = LogManager.getLogger("Console");
+    
+    @Test
+    public void testEmpty() {
+        // Nothing to check since ROCCI Server can be unavailable
+    }
 
     //@Test
     public void testROCCI() throws ConnException {

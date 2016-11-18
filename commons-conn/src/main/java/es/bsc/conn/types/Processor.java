@@ -1,7 +1,8 @@
 package es.bsc.conn.types;
 
 /**
- * Copy from integratedtoolkit.types.resources.components
+ * Representation of a Processor
+ * 
  */
 public class Processor {
 

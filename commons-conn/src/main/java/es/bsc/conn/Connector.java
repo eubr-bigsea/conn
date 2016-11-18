@@ -7,7 +7,10 @@ import es.bsc.conn.types.VirtualResource;
 
 import java.util.Map;
 
-
+/**
+ * Representation of a generic Cloud Connector
+ * 
+ */
 public abstract class Connector {
 
     // Properties' names

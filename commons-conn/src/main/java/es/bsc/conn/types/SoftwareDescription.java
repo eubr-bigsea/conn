@@ -3,7 +3,10 @@ package es.bsc.conn.types;
 import java.util.LinkedList;
 import java.util.List;
 
-
+/**
+ * Implementation of a Virtual Resource Software Description
+ *
+ */
 public class SoftwareDescription {
 
     // Operating System

@@ -5,7 +5,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-
+/**
+ * Implementation of a Virtual Resource Hardware Description
+ *
+ */
 public class HardwareDescription {
 
     // Processor

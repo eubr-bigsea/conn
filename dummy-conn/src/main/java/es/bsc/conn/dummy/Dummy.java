@@ -13,7 +13,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-
+/**
+ * Implementation of a Dummy Connector. Only for testing purposes
+ * 
+ */
 public class Dummy extends Connector {
 
     // Logger

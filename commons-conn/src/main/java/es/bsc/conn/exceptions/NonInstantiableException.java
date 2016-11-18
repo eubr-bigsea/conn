@@ -1,5 +1,9 @@
 package es.bsc.conn.exceptions;
 
+/**
+ * Exception for non instantiable classes
+ * 
+ */
 public class NonInstantiableException extends RuntimeException {
 
     /**

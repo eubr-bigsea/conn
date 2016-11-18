@@ -32,7 +32,10 @@ import es.bsc.conn.types.HardwareDescription;
 import es.bsc.conn.types.SoftwareDescription;
 import es.bsc.conn.types.VirtualResource;
 
-
+/**
+ * Implementation of JClouds connector
+ *
+ */
 public class JClouds extends Connector {
 
     // Properties' names

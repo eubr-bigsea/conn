@@ -19,4 +19,5 @@ public class BasicTypes {
     private BasicTypes() {
         throw new NonInstantiableException("Loggers should not be instantiated");
     }
+    
 }

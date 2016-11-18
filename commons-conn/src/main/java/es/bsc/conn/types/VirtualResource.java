@@ -2,7 +2,10 @@ package es.bsc.conn.types;
 
 import java.util.Map;
 
-
+/**
+ * Implementation of a Virtual Resource description
+ *
+ */
 public class VirtualResource {
 
     private static final String DEFAULT_ID = "-1";

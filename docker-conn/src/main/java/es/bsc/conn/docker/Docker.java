@@ -24,14 +24,15 @@ import com.github.dockerjava.core.DockerClientConfig;
 import com.github.dockerjava.core.DefaultDockerClientConfig;
 import com.github.dockerjava.core.DefaultDockerClientConfig.Builder;
 
-
+/**
+ * Implementation of the Docker connector
+ * 
+ */
 public class Docker extends Connector {
 
     // Properties' names
     private static final String PROP_PROVIDER_USER = "provider-user";
     private static final String PROP_VM_USER = "vm-user";
-    private static final String PROP_ADAPTOR_MIN_PORT = "adaptor-min-port";
-    private static final String PROP_ADAPTOR_MAX_PORT = "adaptor-max-port";
 
     // Open ssh daemon and wait for Master commands
     private static final String[] WORKER_CMD = { "/usr/sbin/sshd", "-D" };

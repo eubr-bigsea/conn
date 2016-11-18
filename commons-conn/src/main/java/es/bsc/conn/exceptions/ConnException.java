@@ -1,5 +1,9 @@
 package es.bsc.conn.exceptions;
 
+/**
+ * Generic ConnException for all connector' implementations
+ *
+ */
 public class ConnException extends Exception {
 
     /**

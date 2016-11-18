@@ -18,7 +18,10 @@ import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-
+/**
+ * Implementation of ROCCI Connector version 4.2.5
+ *
+ */
 public class ROCCI extends Connector {
 
     // ROCCI Client API version

@@ -19,7 +19,10 @@ import org.apache.logging.log4j.Logger;
 import org.apache.mesos.Protos.Resource;
 import org.apache.mesos.Protos.Value;
 
-
+/**
+ * Implementation of Mesos connector
+ *
+ */
 public class Mesos extends Connector {
 
     // Properties' names
