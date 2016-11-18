@@ -2,6 +2,7 @@ package es.bsc.conn.vmm;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -50,8 +51,9 @@ public class VMMConnector extends Connector {
     @Override
     public Object create(HardwareDescription hd, SoftwareDescription sd, Map<String, String> prop) throws ConnException {
         try {
-            String vmId = client.createVM(hd.getImageName(), hd.getTotalComputingUnits(), (int) (hd.getMemorySize() * 1_000),
-                    (int) hd.getStorageSize(), true);
+        	String vmName = appName + '-' + UUID.randomUUID().toString();
+            String vmId = client.createVM(vmName, hd.getImageName(), hd.getTotalComputingUnits(), (int) (hd.getMemorySize() * 1_000),
+                    (int) hd.getStorageSize(), appName, true);
 
             vmidToHardwareRequest.put(vmId, hd);
             vmidToSoftwareRequest.put(vmId, sd);
