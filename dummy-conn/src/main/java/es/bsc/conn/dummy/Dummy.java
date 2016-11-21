@@ -55,7 +55,7 @@ public class Dummy extends Connector {
         try {
             Thread.sleep(15_000);
         } catch (InterruptedException ie) {
-            throw new ConnException(ie);
+            Thread.currentThread().interrupt();
         }
 
         LOGGER.info("Waiting VirtualResource " + id);
