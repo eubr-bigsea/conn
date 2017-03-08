@@ -7,6 +7,8 @@ import java.util.UUID;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import es.bsc.configurator.energy_scheduler.EnergySchedulerConfigurator;
+import es.bsc.configurator.energy_scheduler.VMProperties;
 import es.bsc.conn.Connector;
 import es.bsc.conn.clients.exceptions.ConnClientException;
 import es.bsc.conn.clients.vmm.VMMClient;
@@ -39,6 +41,7 @@ public class VMMConnector extends Connector {
     private final Map<String, HardwareDescription> vmidToHardwareRequest = new HashMap<>();
     private final Map<String, SoftwareDescription> vmidToSoftwareRequest = new HashMap<>();
 
+    private int currentVMs;
 
     /**
      * Initializes the VMM connector with the given properties
@@ -49,15 +52,26 @@ public class VMMConnector extends Connector {
     public VMMConnector(Map<String, String> props) throws ConnException {
         super(props);
         this.client = new VMMClient(server);
+        currentVMs=0;
     }
 
     @Override
     public Object create(HardwareDescription hd, SoftwareDescription sd, Map<String, String> prop) throws ConnException {
         try {
         	String vmName = appName + '-' + UUID.randomUUID().toString();
-            String vmId = client.createVM(vmName, hd.getImageName(), hd.getTotalComputingUnits(), (int) (hd.getMemorySize() * 1_000),
-                    (int) hd.getStorageSize(), appName, true);
-
+        	String preferredHost = "";
+        	if (EnergySchedulerConfigurator.hasSchedulerConfiguration()){
+        		VMProperties vmProp = EnergySchedulerConfigurator.getNextVM(currentVMs);
+        		hd.setTotalComputingUnits(vmProp.getCpus());
+        		hd.getProcessors().get(0).setComputingUnits(vmProp.getCpus());
+        		hd.setMemorySize(vmProp.getMemory()/1024.0f);
+        		hd.setStorageSize(vmProp.getDisk());
+        		preferredHost = vmProp.getPreferredHost();
+        	}
+        	
+        	String vmId = client.createVM(vmName, hd.getImageName(), hd.getTotalComputingUnits(), (int) (hd.getMemorySize() * 1_024),
+                    (int) hd.getStorageSize(), appName, preferredHost,true);
+ 
             vmidToHardwareRequest.put(vmId, hd);
             vmidToSoftwareRequest.put(vmId, sd);
 
@@ -66,7 +80,10 @@ public class VMMConnector extends Connector {
         } catch (ConnClientException ce) {
             logger.error("Exception submitting vm creation", ce);
             throw new ConnException(ce);
-        }
+        } catch (Exception e) {
+        	logger.error("Exception submitting vm creation", e);
+            throw new ConnException(e);
+		}
     }
 
     @Override
@@ -106,7 +123,7 @@ public class VMMConnector extends Connector {
                 throw new ConnException("Unregistered hardware description for vmId = " + vmId);
             }
             hd.setTotalComputingUnits(vmd.getCpus());
-            hd.setMemorySize(vmd.getRamMb());
+            hd.setMemorySize(vmd.getRamMb()/1024);
             hd.setStorageSize(vmd.getDiskGb());
             hd.setImageName(vmd.getImage());
             vr.setHd(hd);
@@ -117,7 +134,7 @@ public class VMMConnector extends Connector {
             }
             sd.setOperatingSystemType("Linux");
             vr.setSd(sd);
-
+            currentVMs++;
             return vr;
         } catch (ConnClientException | InterruptedException e) {
             logger.error("Exception waiting for VM Creation");
@@ -132,9 +149,11 @@ public class VMMConnector extends Connector {
             client.deleteVM(vmId);
             vmidToHardwareRequest.remove(vmId);
             vmidToSoftwareRequest.remove(vmId);
+            
         } catch (ConnClientException cce) {
             logger.error("Exception waiting for VM Destruction", cce);
         }
+        currentVMs--;
     }
 
     @Override
