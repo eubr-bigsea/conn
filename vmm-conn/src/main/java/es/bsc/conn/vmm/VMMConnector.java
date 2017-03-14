@@ -145,6 +145,7 @@ public class VMMConnector extends Connector {
     @Override
     public void destroy(Object id) {
         String vmId = (String) id;
+        logger.debug("Destroying VM "+ vmId);
         try {
             client.deleteVM(vmId);
             vmidToHardwareRequest.remove(vmId);
@@ -153,6 +154,7 @@ public class VMMConnector extends Connector {
         } catch (ConnClientException cce) {
             logger.error("Exception waiting for VM Destruction", cce);
         }
+        logger.debug("VM "+ vmId+ " destroyed.");
         currentVMs--;
     }
 
