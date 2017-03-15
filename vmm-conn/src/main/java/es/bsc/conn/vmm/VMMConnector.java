@@ -58,6 +58,7 @@ public class VMMConnector extends Connector {
     @Override
     public Object create(HardwareDescription hd, SoftwareDescription sd, Map<String, String> prop) throws ConnException {
         try {
+		
         	String vmName = appName + '-' + UUID.randomUUID().toString();
         	String preferredHost = "";
         	if (EnergySchedulerConfigurator.hasSchedulerConfiguration()){
@@ -68,7 +69,7 @@ public class VMMConnector extends Connector {
         		hd.setStorageSize(vmProp.getDisk());
         		preferredHost = vmProp.getPreferredHost();
         	}
-        	
+        	currentVMs++;	
         	String vmId = client.createVM(vmName, hd.getImageName(), hd.getTotalComputingUnits(), (int) (hd.getMemorySize() * 1_024),
                     (int) hd.getStorageSize(), appName, preferredHost,true);
  
@@ -79,6 +80,7 @@ public class VMMConnector extends Connector {
             return vr.getId();
         } catch (ConnClientException ce) {
             logger.error("Exception submitting vm creation", ce);
+	    currentVMs--;
             throw new ConnException(ce);
         } catch (Exception e) {
         	logger.error("Exception submitting vm creation", e);
@@ -134,7 +136,6 @@ public class VMMConnector extends Connector {
             }
             sd.setOperatingSystemType("Linux");
             vr.setSd(sd);
-            currentVMs++;
             return vr;
         } catch (ConnClientException | InterruptedException e) {
             logger.error("Exception waiting for VM Creation");
