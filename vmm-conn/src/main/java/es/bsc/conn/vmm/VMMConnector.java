@@ -30,6 +30,7 @@ public class VMMConnector extends Connector {
     private static final String ERROR = "ERROR";
     private static final long POLLING_INTERVAL = 5;
     private static final int TIMEOUT = 1_800;
+    private static Object lock= new Object(); 
 
     // Logger
     private static final Logger logger = LogManager.getLogger(Loggers.VMM);
@@ -57,8 +58,8 @@ public class VMMConnector extends Connector {
 
     @Override
     public Object create(HardwareDescription hd, SoftwareDescription sd, Map<String, String> prop) throws ConnException {
-        try {
-		
+        synchronized(lock){
+    	try {
         	String vmName = appName + '-' + UUID.randomUUID().toString();
         	String preferredHost = "";
         	if (EnergySchedulerConfigurator.hasSchedulerConfiguration()){
@@ -86,6 +87,7 @@ public class VMMConnector extends Connector {
         	logger.error("Exception submitting vm creation", e);
             throw new ConnException(e);
 		}
+        }
     }
 
     @Override
