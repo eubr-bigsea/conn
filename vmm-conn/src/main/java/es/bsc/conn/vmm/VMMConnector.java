@@ -78,6 +78,8 @@ public class VMMConnector extends Connector {
             vmidToSoftwareRequest.put(vmId, sd);
 
             VirtualResource vr = new VirtualResource(vmId, hd, sd, prop);
+            logger.debug("****** Sleeping 20s after creation");
+            Thread.sleep(20_000);
             return vr.getId();
         } catch (ConnClientException ce) {
             logger.error("Exception submitting vm creation", ce);
