@@ -7,8 +7,6 @@ import java.util.UUID;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import es.bsc.configurator.energy_scheduler.EnergySchedulerConfigurator;
-import es.bsc.configurator.energy_scheduler.VMProperties;
 import es.bsc.conn.Connector;
 import es.bsc.conn.clients.exceptions.ConnClientException;
 import es.bsc.conn.clients.vmm.VMMClient;
@@ -61,14 +59,6 @@ public class VMMConnector extends Connector {
     	try {
         	String vmName = appName + '-' + UUID.randomUUID().toString();
         	String preferredHost = "";
-        	if (EnergySchedulerConfigurator.hasSchedulerConfiguration()){
-        		VMProperties vmProp = EnergySchedulerConfigurator.getNextVM(currentVMs);
-        		hd.setTotalComputingUnits(vmProp.getCpus());
-        		hd.getProcessors().get(0).setComputingUnits(vmProp.getCpus());
-        		hd.setMemorySize(vmProp.getMemory()/1024.0f);
-        		hd.setStorageSize(vmProp.getDisk());
-        		preferredHost = vmProp.getPreferredHost();
-        	}
         	currentVMs++;	
         	String vmId = client.createVM(vmName, hd.getImageName(), hd.getTotalComputingUnits(), (int) (hd.getMemorySize() * 1_024),
                     (int) hd.getStorageSize(), appName, preferredHost,true);
