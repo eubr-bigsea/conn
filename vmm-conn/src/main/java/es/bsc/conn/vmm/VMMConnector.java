@@ -58,7 +58,6 @@ public class VMMConnector extends Connector {
 
     @Override
     public Object create(HardwareDescription hd, SoftwareDescription sd, Map<String, String> prop) throws ConnException {
-        synchronized(lock){
     	try {
         	String vmName = appName + '-' + UUID.randomUUID().toString();
         	String preferredHost = "";
@@ -78,8 +77,6 @@ public class VMMConnector extends Connector {
             vmidToSoftwareRequest.put(vmId, sd);
 
             VirtualResource vr = new VirtualResource(vmId, hd, sd, prop);
-            logger.debug("****** Sleeping 20s after creation");
-            Thread.sleep(20_000);
             return vr.getId();
         } catch (ConnClientException ce) {
             logger.error("Exception submitting vm creation", ce);
@@ -89,7 +86,6 @@ public class VMMConnector extends Connector {
         	logger.error("Exception submitting vm creation", e);
             throw new ConnException(e);
 		}
-        }
     }
 
     @Override
