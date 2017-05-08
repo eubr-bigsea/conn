@@ -97,7 +97,7 @@ public class ROCCI extends Connector {
 
     /**
      * Initializes the ROCCI connector with the given properties
-     * 
+     *
      * @param props
      */
     public ROCCI(Map<String, String> props) throws ConnException {
@@ -331,6 +331,11 @@ public class ROCCI extends Connector {
         vmidToSoftwareRequest.remove(vmId);
     }
 
+    public void attachLink(String vmId, String link) {
+        LOGGER.info(" Attach link " + link + " to VM " + vmId + " with rOCCI connector");
+        client.attachLink(vmId, link);
+    }
+
     @Override
     public float getPriceSlot(VirtualResource virtualResource) {
         return virtualResource.getHd().getPricePerUnit();
@@ -378,4 +383,7 @@ public class ROCCI extends Connector {
         hd.setTotalComputingUnits(cores);
     }
 
+    public void attachLink(String link){
+
+    }
 }
