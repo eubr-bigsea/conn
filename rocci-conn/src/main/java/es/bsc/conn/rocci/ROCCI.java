@@ -383,7 +383,4 @@ public class ROCCI extends Connector {
         hd.setTotalComputingUnits(cores);
     }
 
-    public void attachLink(String link){
-
-    }
 }
