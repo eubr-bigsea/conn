@@ -13,8 +13,11 @@ public class HardwareDescription {
 
     // Processor
     protected List<Processor> processors = new LinkedList<>();
+    // Processor CPU computing units
     protected int totalComputingUnits = BasicTypes.ZERO_INT;
-
+    protected int totalGPUComputingUnits = BasicTypes.ZERO_INT;
+    protected int totalFPGAComputingUnits = BasicTypes.ZERO_INT;
+    
     // Memory
     protected float memorySize = BasicTypes.UNASSIGNED_FLOAT;
     protected String memoryType = BasicTypes.UNASSIGNED_STR;
@@ -106,6 +109,42 @@ public class HardwareDescription {
      */
     public void setTotalComputingUnits(int tCU) {
         this.totalComputingUnits = tCU;
+    }
+    
+    /**
+     * Returns the total number of computing units
+     * 
+     * @return
+     */
+    public int getTotalGPUComputingUnits() {
+        return totalGPUComputingUnits;
+    }
+
+    /**
+     * Sets the total number of computing units
+     * 
+     * @param tCU
+     */
+    public void setTotalGPUComputingUnits(int tCU) {
+        this.totalGPUComputingUnits = tCU;
+    }
+    
+    /**
+     * Returns the total number of computing units
+     * 
+     * @return
+     */
+    public int getTotalFPGAComputingUnits() {
+        return totalFPGAComputingUnits;
+    }
+
+    /**
+     * Sets the total number of computing units
+     * 
+     * @param tCU
+     */
+    public void setTotalFPGAComputingUnits(int tCU) {
+        this.totalFPGAComputingUnits = tCU;
     }
 
     /**

@@ -22,7 +22,7 @@ public class Loggers {
     public static final String DOCKER = CONN + ".Docker";
     public static final String MESOS = CONN + ".Mesos";
     public static final String VMM = CONN + ".VMM";
-
+    public static final String SLURM = CONN + ".SLURM";
 
     private Loggers() {
         throw new NonInstantiableException("Loggers should not be instantiated");

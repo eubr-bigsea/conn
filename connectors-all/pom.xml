@@ -63,5 +63,10 @@
 			<artifactId>vmm-conn</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+                        <groupId>es.bsc</groupId>
+                        <artifactId>slurm-conn</artifactId>
+                        <version>${project.version}</version>
+                </dependency>
 	</dependencies>
 </project>

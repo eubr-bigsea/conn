@@ -16,6 +16,8 @@ public class SoftwareDescription {
 
     // Applications
     protected List<String> appSoftware = new LinkedList<>();
+    
+    protected InstallationDescription installation;
 
 
     /**
@@ -36,12 +38,13 @@ public class SoftwareDescription {
      * @param appSoftware
      */
     public SoftwareDescription(String operatingSystemType, String operatingSystemDistribution, String operatingSystemVersion,
-            List<String> appSoftware) {
+            List<String> appSoftware, InstallationDescription installation) {
 
         this.operatingSystemType = operatingSystemType;
         this.operatingSystemDistribution = operatingSystemDistribution;
         this.operatingSystemVersion = operatingSystemVersion;
         this.appSoftware = appSoftware;
+        this.installation = installation;
     }
 
     /**
@@ -71,7 +74,9 @@ public class SoftwareDescription {
         return operatingSystemDistribution;
     }
 
-    /**
+    
+
+	/**
      * Sets the operating system distribution
      * 
      * @param osDistribution
@@ -115,5 +120,18 @@ public class SoftwareDescription {
     public void setAppSoftware(List<String> appSoftware) {
         this.appSoftware = appSoftware;
     }
+    
+    /** Get the COMPSs and Application for the image installation details
+	 * @return the installation
+	 */
+	public InstallationDescription getInstallation() {
+		return installation;
+	}
 
+	/**Get the COMPSs and Application for the image installation details
+	 * @param installation the installation to set
+	 */
+	public void setInstallation(InstallationDescription installation) {
+		this.installation = installation;
+	}
 }

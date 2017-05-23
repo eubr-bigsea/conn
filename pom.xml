@@ -28,7 +28,7 @@
 	<!-- PROPERTIES -->
 	<properties>
 		<!-- CONN CLIENTS VERSION -->
-		<conn-clients.version>1.0-30</conn-clients.version>
+		<conn-clients.version>1.0-32</conn-clients.version>
 
 		<!-- JUnit version -->
 		<junit.version>4.12</junit.version>
@@ -152,6 +152,7 @@
 		<module>mesos-conn</module>
 		<module>jclouds-conn</module>
 		<module>vmm-conn</module>
+		<module>slurm-conn</module>
 		<module>connectors-all</module>
 	</modules>
 </project>
