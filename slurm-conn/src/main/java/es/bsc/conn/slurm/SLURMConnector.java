@@ -1,6 +1,8 @@
 package es.bsc.conn.slurm;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -64,7 +66,7 @@ public class SLURMConnector extends Connector {
         	String jobName = appName + '-' + UUID.randomUUID().toString();
         	String preferredHost = "";
         	currentNodes++;
-        	String jobId = client.createCompute(generateJobDescription(hd, sd), generateExecScript(hd, sd, prop));
+        	String jobId = client.createCompute(generateJobDescription(hd, sd), generateExecScript(jobName, hd, sd, prop));
             vmidToHardwareRequest.put(jobId, hd);
             vmidToSoftwareRequest.put(jobId, sd);
 
@@ -80,10 +82,12 @@ public class SLURMConnector extends Connector {
 		}
     }
 
-    private String generateExecScript(HardwareDescription hd, SoftwareDescription sd,
+
+	private String generateExecScript(String jobName, HardwareDescription hd, SoftwareDescription sd,
 			Map<String, String> prop) throws ConnException {
+    	
     	InstallationDescription instDesc = sd.getInstallation();
-    	StringBuilder script = new StringBuilder();
+    	StringBuilder script = new StringBuilder("#!/bin/sh\n");
     	String installDir = instDesc.getInstallDir();
     	if (installDir ==null){
     		installDir = System.getenv("IT_HOME");
@@ -91,7 +95,7 @@ public class SLURMConnector extends Connector {
     			throw new ConnException("Unable to get COMPSs installation directory");
     		}
     	}
-    	if (hd.getImageName()!= null && !hd.getImageName().isEmpty() && hd.getImageName().equals("None")){
+    	if (hd.getImageName()!= null && !hd.getImageName().isEmpty() && !hd.getImageName().equals("None")){
     		script.append("singularity exec "+ hd.getImageName() + " " + installDir + 
     				"/Runtime/scripts/system/adaptors/nio/persistent_worker_starter.sh");
     	}else{
@@ -169,7 +173,7 @@ public class SLURMConnector extends Connector {
         	throw new ConnException("Unable to get lang");
         }
         //sandboxeddir
-        script.append(" " +instDesc.getWorkingDir()+File.separator+uuid+File.separator+"$LURM_JOB_NODELIST");
+        script.append(" " +instDesc.getWorkingDir()+File.separator+uuid+File.separator+"$SLURM_JOB_NODELIST");
         //install_dir
         script.append(" "+installDir);
         
@@ -213,7 +217,30 @@ public class SLURMConnector extends Connector {
             executionType = "compss";
         }
         script.append(" " +storageConf);
-		return script.toString();
+        String appLogdir = System.getProperty("it.appLogDir");
+        if (appLogdir == null){
+        	throw new ConnException("Unable to get app log dir");
+        }
+        File runScript = new File(appLogdir+File.separator+"run_"+jobName);
+        FileOutputStream fos = null;
+        try {
+			runScript.createNewFile();
+			runScript.setExecutable(true);
+			fos = new FileOutputStream(runScript);
+			fos.write(script.toString().getBytes());
+			return runScript.getAbsolutePath();
+        } catch (IOException e) {
+        	throw new ConnException("Exception writting script", e);
+		} finally {
+			if (fos != null){
+				try {
+					fos.close();
+				} catch (IOException e) {
+					//Nothing to do
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 
 	private String getPWD() throws ConnException {
