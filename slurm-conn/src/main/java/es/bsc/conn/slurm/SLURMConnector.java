@@ -3,6 +3,8 @@ package es.bsc.conn.slurm;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.attribute.FileAttribute;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,6 +49,7 @@ public class SLURMConnector extends Connector {
     private final Map<String, SoftwareDescription> vmidToSoftwareRequest = new HashMap<>();
 
     private int currentNodes;
+    private String logDir;
 
     /**
      * Initializes the Slurm connector with the given properties
@@ -56,8 +59,23 @@ public class SLURMConnector extends Connector {
      */
     public SLURMConnector(Map<String, String> props) throws ConnException {
         super(props);
+        String masterName = props.get("master_name");
+        if (masterName==null || masterName.isEmpty()){
+        	throw new ConnException("Unable to get master_name. Property is empty");
+        }
+        String appLogdir = System.getProperty("it.appLogDir");
+        if (appLogdir == null){
+        	throw new ConnException("Unable to get app log dir");
+        }
+        File f = new File(appLogdir+File.separator+"slurm-conn-log");
+        if (f.mkdirs()){
+        	logDir = f.getAbsolutePath();
+        }else{
+        	throw new ConnException("Unable to create SLURM connector log dir");
+        }
         this.client = new SlurmClient(props.get("master_name"));
         currentNodes=0;
+       
     }
 
 	@Override
@@ -85,7 +103,8 @@ public class SLURMConnector extends Connector {
 
 	private String generateExecScript(String jobName, HardwareDescription hd, SoftwareDescription sd,
 			Map<String, String> prop) throws ConnException {
-    	
+    	//stderr stdout flags
+		String stdFlags = "-e " + logDir + File.separator + jobName + ".err -o " +  logDir + File.separator + jobName +".out";
     	InstallationDescription instDesc = sd.getInstallation();
     	StringBuilder script = new StringBuilder("#!/bin/sh\n");
     	String installDir = instDesc.getInstallDir();
@@ -118,7 +137,7 @@ public class SLURMConnector extends Connector {
     	}
     	script.append(" " +cp);
     	String jvmOptsSize = prop.get("jvm_opts_size");
-    	if (jvmOptsSize == null){
+    	if (jvmOptsSize == null || jvmOptsSize.isEmpty()){
     		jvmOptsSize = "0";
     	}
     	script.append(" " +jvmOptsSize);
@@ -217,18 +236,15 @@ public class SLURMConnector extends Connector {
             executionType = "compss";
         }
         script.append(" " +storageConf);
-        String appLogdir = System.getProperty("it.appLogDir");
-        if (appLogdir == null){
-        	throw new ConnException("Unable to get app log dir");
-        }
-        File runScript = new File(appLogdir+File.separator+"run_"+jobName);
+        File runScript = new File(logDir+File.separator+"run_"+jobName);
         FileOutputStream fos = null;
         try {
 			runScript.createNewFile();
 			runScript.setExecutable(true);
 			fos = new FileOutputStream(runScript);
 			fos.write(script.toString().getBytes());
-			return runScript.getAbsolutePath();
+			
+			return  stdFlags + " "+ runScript.getAbsolutePath();
         } catch (IOException e) {
         	throw new ConnException("Exception writting script", e);
 		} finally {
