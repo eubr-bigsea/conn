@@ -107,6 +107,7 @@ public class SLURMConnector extends Connector {
 		String stdFlags = "-e " + logDir + File.separator + jobName + ".err -o " +  logDir + File.separator + jobName +".out";
     	InstallationDescription instDesc = sd.getInstallation();
     	StringBuilder script = new StringBuilder("#!/bin/sh\n");
+    	//COMMAND
     	String installDir = instDesc.getInstallDir();
     	if (installDir ==null){
     		installDir = System.getenv("IT_HOME");
@@ -120,61 +121,84 @@ public class SLURMConnector extends Connector {
     	}else{
     		script.append(installDir + "/Runtime/scripts/system/adaptors/nio/persistent_worker_starter.sh");
     	}
+    	//libpath ($1)
     	String libPath = instDesc.getLibraryPath();
     	if (libPath == null || libPath.isEmpty()){
     		libPath = getPWD();
     	}
     	script.append(" " +libPath);
+    	//appDir ($2)
     	String appDir = instDesc.getAppDir();
     	if (appDir == null || appDir.isEmpty() ){
     		appDir = getPWD();
     	}
     	script.append(" " +appDir);
-    	
+    	//classpath ($3)
     	String cp = instDesc.getClasspath();
     	if (cp == null || cp.isEmpty()){
     		cp = getPWD();
     	}
     	script.append(" " +cp);
+    	//jvm_opts_size ($4)
     	String jvmOptsSize = prop.get("jvm_opts_size");
     	if (jvmOptsSize == null || jvmOptsSize.isEmpty()){
     		jvmOptsSize = "0";
     	}
     	script.append(" " +jvmOptsSize);
+    	//jvm_opts_str ($5)
     	String jvmOptsStr = prop.get("jvm_opts_str");
     	if (jvmOptsStr == null){
     		jvmOptsStr = "";
     	}
     	script.append(" " +jvmOptsStr);
-    	// Configure worker debug level
+    	
+    	// Configure worker debug level ($6)
         String workerDebug = prop.get("worker_debug");
         if (workerDebug == null || workerDebug.isEmpty() || workerDebug.equals("null")) {
         	workerDebug = "false";
         }
         script.append(" " +workerDebug);
+        
+        //MaxSend ($7)
         script.append(" " + 5);
+        
+        //MaxReceived ($7)
         script.append(" " + 5);
+        
+        //Node Name
         script.append(" $SLURM_JOB_NODELIST");
+        
+        //worker Port
         script.append(" 43001");
+        
+        //master Port
         String masterPort = prop.get("master_port");
         if (masterPort == null || masterPort.isEmpty() || masterPort.equals("null")) {
         	masterPort = "43000";
         }
         script.append(" " +masterPort);
         
-        //Afinity
+        //CPU CUs
         script.append(" " +hd.getTotalComputingUnits());
+        
+        //GPU CUs
         script.append(" " +hd.getTotalGPUComputingUnits());
+        
+        //CPU Affinity
         String cpuAff = prop.get("cpu_affinity");
         if (cpuAff == null || cpuAff.isEmpty() || cpuAff.equals("null")) {
         	cpuAff = "automatic";
         }
         script.append(" " +cpuAff);
+        
+        //GPU Affinity
         String gpuAff = prop.get("gpu_affinity");
         if (gpuAff == null || gpuAff.isEmpty() || gpuAff.equals("null")) {
         	gpuAff = "automatic";
         }
         script.append(" " +gpuAff);
+        
+        //Limit Of Tasks
         int limitOfTasks = instDesc.getLimitOfTasks();
         if (limitOfTasks < 0) {
             limitOfTasks = hd.getTotalComputingUnits();
@@ -186,22 +210,30 @@ public class SLURMConnector extends Connector {
         if (uuid == null || uuid.isEmpty() || uuid.equals("null")) {
         	throw new ConnException("Unable to get uuid");
         }
+        script.append(" "+uuid);
+        
         //lang
         String lang = System.getProperty("it.lang");
         if (lang == null || lang.isEmpty() || lang.equals("null")) {
         	throw new ConnException("Unable to get lang");
         }
+        script.append(" "+lang);
+        
         //sandboxeddir
         script.append(" " +instDesc.getWorkingDir()+File.separator+uuid+File.separator+"$SLURM_JOB_NODELIST");
+        
         //install_dir
         script.append(" "+installDir);
         
         //appdir
         script.append(" " +appDir);
+        
         //library_path
         script.append(" " +libPath);
+        
         //classpath
         script.append(" " +cp);
+        
         //pythonpath
         String pythonPath = instDesc.getPythonPath();
     	if (pythonPath == null || pythonPath.isEmpty()){
@@ -215,6 +247,8 @@ public class SLURMConnector extends Connector {
             tracing = "0";
         }
         script.append(" " +tracing);
+        
+        //extrae file
         String extraeFile = System.getProperty("it.extrae.file");
         if (extraeFile == null || extraeFile.isEmpty() || extraeFile.equals("null")) {
             extraeFile = "null";
@@ -230,12 +264,14 @@ public class SLURMConnector extends Connector {
             storageConf = "null";
         }
         script.append(" " +storageConf);
+        
         //Task execution
         String executionType = System.getProperty("it.task.execution");
         if (executionType == null || executionType.isEmpty() || executionType.equals("null")) {
             executionType = "compss";
         }
         script.append(" " +storageConf);
+        
         File runScript = new File(logDir+File.separator+"run_"+jobName);
         FileOutputStream fos = null;
         try {
