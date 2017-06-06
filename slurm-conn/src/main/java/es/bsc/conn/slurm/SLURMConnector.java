@@ -121,18 +121,18 @@ public class SLURMConnector extends Connector {
     		script.append(installDir + "/Runtime/scripts/system/adaptors/nio/persistent_worker_starter.sh");
     	}
     	String libPath = instDesc.getLibraryPath();
-    	if (libPath == null){
+    	if (libPath == null || libPath.isEmpty()){
     		libPath = getPWD();
     	}
     	script.append(" " +libPath);
     	String appDir = instDesc.getAppDir();
-    	if (appDir == null){
+    	if (appDir == null || appDir.isEmpty() ){
     		appDir = getPWD();
     	}
     	script.append(" " +appDir);
     	
     	String cp = instDesc.getClasspath();
-    	if (cp == null){
+    	if (cp == null || cp.isEmpty()){
     		cp = getPWD();
     	}
     	script.append(" " +cp);
@@ -148,7 +148,7 @@ public class SLURMConnector extends Connector {
     	script.append(" " +jvmOptsStr);
     	// Configure worker debug level
         String workerDebug = prop.get("worker_debug");
-        if (workerDebug == null || workerDebug.equals("") || workerDebug.equals("null")) {
+        if (workerDebug == null || workerDebug.isEmpty() || workerDebug.equals("null")) {
         	workerDebug = "false";
         }
         script.append(" " +workerDebug);
@@ -157,7 +157,7 @@ public class SLURMConnector extends Connector {
         script.append(" $SLURM_JOB_NODELIST");
         script.append(" 43001");
         String masterPort = prop.get("master_port");
-        if (masterPort == null || masterPort.equals("") || masterPort.equals("null")) {
+        if (masterPort == null || masterPort.isEmpty() || masterPort.equals("null")) {
         	masterPort = "43000";
         }
         script.append(" " +masterPort);
@@ -166,12 +166,12 @@ public class SLURMConnector extends Connector {
         script.append(" " +hd.getTotalComputingUnits());
         script.append(" " +hd.getTotalGPUComputingUnits());
         String cpuAff = prop.get("cpu_affinity");
-        if (cpuAff == null || cpuAff.equals("") || cpuAff.equals("null")) {
+        if (cpuAff == null || cpuAff.isEmpty() || cpuAff.equals("null")) {
         	cpuAff = "automatic";
         }
         script.append(" " +cpuAff);
         String gpuAff = prop.get("gpu_affinity");
-        if (gpuAff == null || gpuAff.equals("") || gpuAff.equals("null")) {
+        if (gpuAff == null || gpuAff.isEmpty() || gpuAff.equals("null")) {
         	gpuAff = "automatic";
         }
         script.append(" " +gpuAff);
@@ -183,12 +183,12 @@ public class SLURMConnector extends Connector {
         
         //uuid
         String uuid = System.getProperty("it.uuid");
-        if (uuid == null || uuid.equals("") || uuid.equals("null")) {
+        if (uuid == null || uuid.isEmpty() || uuid.equals("null")) {
         	throw new ConnException("Unable to get uuid");
         }
         //lang
         String lang = System.getProperty("it.lang");
-        if (lang == null || lang.equals("") || lang.equals("null")) {
+        if (lang == null || lang.isEmpty() || lang.equals("null")) {
         	throw new ConnException("Unable to get lang");
         }
         //sandboxeddir
@@ -204,19 +204,19 @@ public class SLURMConnector extends Connector {
         script.append(" " +cp);
         //pythonpath
         String pythonPath = instDesc.getPythonPath();
-    	if (pythonPath == null){
+    	if (pythonPath == null || pythonPath.isEmpty()){
     		pythonPath = getPWD();
     	}
         script.append(" " + pythonPath);
         
         //tracing
         String tracing = System.getProperty("it.tracing");
-        if (tracing == null || tracing.equals("") || tracing.equals("null")) {
+        if (tracing == null || tracing.isEmpty() || tracing.equals("null")) {
             tracing = "0";
         }
         script.append(" " +tracing);
         String extraeFile = System.getProperty("it.extrae.file");
-        if (extraeFile == null || extraeFile.equals("") || extraeFile.equals("null")) {
+        if (extraeFile == null || extraeFile.isEmpty() || extraeFile.equals("null")) {
             extraeFile = "null";
         }
         script.append(" " +extraeFile);
@@ -226,13 +226,13 @@ public class SLURMConnector extends Connector {
         
         // Configure storage
         String storageConf = System.getProperty("it.storage.conf");
-        if (storageConf == null || storageConf.equals("") || storageConf.equals("null")) {
+        if (storageConf == null || storageConf.isEmpty() || storageConf.equals("null")) {
             storageConf = "null";
         }
         script.append(" " +storageConf);
         //Task execution
         String executionType = System.getProperty("it.task.execution");
-        if (executionType == null || executionType.equals("") || executionType.equals("null")) {
+        if (executionType == null || executionType.isEmpty() || executionType.equals("null")) {
             executionType = "compss";
         }
         script.append(" " +storageConf);
