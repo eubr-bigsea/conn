@@ -311,7 +311,7 @@ public class SLURMConnector extends Connector {
 		req.put("NumCPUs", Integer.toString(hd.getTotalComputingUnits()));
 		
 		if (hd.getMemorySize()>0){
-			req.put("mem", Integer.toString((int)hd.getMemorySize()));
+			req.put("mem", Integer.toString((int)hd.getMemorySize()*1024));
 		}
 		// check gpus and set as gres
 		int gpuUnits=0;
