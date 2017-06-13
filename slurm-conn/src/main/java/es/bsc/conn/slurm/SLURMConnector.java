@@ -270,7 +270,7 @@ public class SLURMConnector extends Connector {
         if (executionType == null || executionType.isEmpty() || executionType.equals("null")) {
             executionType = "compss";
         }
-        script.append(" " +storageConf);
+        script.append(" " +executionType);
         
         File runScript = new File(logDir+File.separator+"run_"+jobName);
         FileOutputStream fos = null;
