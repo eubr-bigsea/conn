@@ -47,7 +47,7 @@ public class SLURMConnector extends Connector {
     // Information about requests
     private final Map<String, HardwareDescription> vmidToHardwareRequest = new HashMap<>();
     private final Map<String, SoftwareDescription> vmidToSoftwareRequest = new HashMap<>();
-
+    private final Map<String, String> vmidToHostName = new HashMap<>();
     private int currentNodes;
     private String logDir;
 
@@ -360,7 +360,9 @@ public class SLURMConnector extends Connector {
             // Create Virtual Resource
             VirtualResource vr = new VirtualResource();
             vr.setId(jobId);
-            vr.setIp(jd.getNodeList().get(0));
+            String resourceName=jd.getNodeList().get(0);
+            vmidToHostName.put(jobId,resourceName);
+            vr.setIp(resourceName);
             vr.setProperties(null);
 
             HardwareDescription hd = vmidToHardwareRequest.get(jobId);
@@ -390,9 +392,10 @@ public class SLURMConnector extends Connector {
         String jobId = (String) id;
         logger.debug("Destroying VM "+ jobId);
         try {
-            client.deleteCompute(jobId);
+            client.deleteCompute(vmidToHostName.get(jobId));
             vmidToHardwareRequest.remove(jobId);
             vmidToSoftwareRequest.remove(jobId);
+            vmidToHostName.remove(jobId);
             
         } catch (ConnClientException cce) {
             logger.error("Exception waiting for VM Destruction", cce);
