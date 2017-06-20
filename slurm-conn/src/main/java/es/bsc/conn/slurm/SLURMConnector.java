@@ -43,6 +43,7 @@ public class SLURMConnector extends Connector {
 
     // VMM Client
     private SlurmClient client;
+    private String network;
 
     // Information about requests
     private final Map<String, HardwareDescription> vmidToHardwareRequest = new HashMap<>();
@@ -74,6 +75,10 @@ public class SLURMConnector extends Connector {
         	throw new ConnException("Unable to create SLURM connector log dir");
         }
         this.client = new SlurmClient(props.get("master_name"));
+        this.network=props.get("network");
+        if (this.network==null){
+        	this.network="";
+        }
         currentNodes=0;
        
     }
@@ -166,7 +171,7 @@ public class SLURMConnector extends Connector {
         script.append(" " + 5);
         
         //Node Name
-        script.append(" $SLURM_JOB_NODELIST");
+        script.append(" $SLURM_JOB_NODELIST"+network);
         
         //worker Port
         script.append(" 43001");
@@ -220,7 +225,7 @@ public class SLURMConnector extends Connector {
         script.append(" "+lang);
         
         //sandboxeddir
-        script.append(" " +instDesc.getWorkingDir()+File.separator+uuid+File.separator+"$SLURM_JOB_NODELIST");
+        script.append(" " +instDesc.getWorkingDir()+File.separator+uuid+File.separator+"$SLURM_JOB_NODELIST"+network);
         
         //install_dir
         script.append(" "+installDir);
@@ -360,7 +365,7 @@ public class SLURMConnector extends Connector {
             // Create Virtual Resource
             VirtualResource vr = new VirtualResource();
             vr.setId(jobId);
-            String resourceName=jd.getNodeList().get(0);
+            String resourceName=jd.getNodeList().get(0)+network;
             vmidToHostName.put(jobId,resourceName);
             vr.setIp(resourceName);
             vr.setProperties(null);
@@ -392,7 +397,11 @@ public class SLURMConnector extends Connector {
         String jobId = (String) id;
         logger.debug("Destroying VM "+ jobId);
         try {
-            client.deleteCompute(vmidToHostName.get(jobId));
+        	String resourceName = vmidToHostName.get(jobId);
+        	if (!network.isEmpty()){
+        		//erase network for resourceName
+        		resourceName = resourceName.substring(0,resourceName.indexOf(network)-1);
+            client.deleteCompute(resourceName);
             vmidToHardwareRequest.remove(jobId);
             vmidToSoftwareRequest.remove(jobId);
             vmidToHostName.remove(jobId);
