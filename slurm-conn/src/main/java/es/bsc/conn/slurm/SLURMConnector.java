@@ -401,6 +401,7 @@ public class SLURMConnector extends Connector {
         	if (!network.isEmpty()){
         		//erase network for resourceName
         		resourceName = resourceName.substring(0,resourceName.indexOf(network)-1);
+        	}
             client.deleteCompute(resourceName);
             vmidToHardwareRequest.remove(jobId);
             vmidToSoftwareRequest.remove(jobId);
