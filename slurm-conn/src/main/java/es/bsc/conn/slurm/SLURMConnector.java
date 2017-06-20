@@ -277,6 +277,13 @@ public class SLURMConnector extends Connector {
         }
         script.append(" " +executionType);
         
+       //Persistent c flag
+        String persistent_c = System.getProperty("it.worker.persistent.c");
+        if (persistent_c == null || persistent_c.isEmpty() || persistent_c.equals("null")) {
+            persistent_c = "false";
+        }
+        script.append(" " +persistent_c);
+        
         File runScript = new File(logDir+File.separator+"run_"+jobName);
         FileOutputStream fos = null;
         try {
