@@ -31,10 +31,13 @@ public class SLURMConnector extends Connector {
 
     // Constants
     private static final String RUNNING = "RUNNING";
-    // private static final String PENDING = "PENDING";
     private static final String FAILED = "FAILED";
+
     private static final long POLLING_INTERVAL = 5;
     private static final int TIMEOUT = 1_800;
+
+    // Properties values
+    private static final String JOB_STATE = "JobState";
 
     // Logger
     private static final Logger LOGGER = LogManager.getLogger(Loggers.SLURM);
@@ -278,11 +281,11 @@ public class SLURMConnector extends Connector {
         script.append(" " + executionType);
 
         // Persistent c flag
-        String persistent_c = System.getProperty("it.worker.persistent.c");
-        if (persistent_c == null || persistent_c.isEmpty() || "null".equals(persistent_c)) {
-            persistent_c = "false";
+        String persistentC = System.getProperty("it.worker.persistent.c");
+        if (persistentC == null || persistentC.isEmpty() || "null".equals(persistentC)) {
+            persistentC = "false";
         }
-        script.append(" " + persistent_c);
+        script.append(" " + persistentC);
 
         File runScript = new File(logDir + File.separator + "run_" + jobName);
         try {
@@ -342,11 +345,10 @@ public class SLURMConnector extends Connector {
 
         try {
             JobDescription jd = client.getJobDescription(jobId);
-            LOGGER.debug("Job State is " + jd.getProperty("JobState"));
+            LOGGER.debug("Job State is " + jd.getProperty(JOB_STATE));
             int tries = 0;
-            while (jd.getProperty("JobState") == null || !jd.getProperty("JobState").equals(RUNNING)) {
-
-                if (jd.getProperty("JobState").equals(FAILED)) {
+            while (jd.getProperty(JOB_STATE) == null || !jd.getProperty(JOB_STATE).equals(RUNNING)) {
+                if (jd.getProperty(JOB_STATE).equals(FAILED)) {
                     LOGGER.error("Error waiting for VM Creation. Middleware has return an error state");
                     throw new ConnException("Error waiting for VM Creation. Middleware has return an error state");
                 }
@@ -362,7 +364,7 @@ public class SLURMConnector extends Connector {
                 Thread.sleep(POLLING_INTERVAL * 1_000);
 
                 jd = client.getJobDescription(jobId);
-                LOGGER.debug("Job State is " + jd.getProperty("JobState"));
+                LOGGER.debug("Job State is " + jd.getProperty(JOB_STATE));
             }
 
             client.addNodesToMain(jobId, jd);
