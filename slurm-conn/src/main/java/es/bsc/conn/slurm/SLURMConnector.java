@@ -340,16 +340,17 @@ public class SLURMConnector extends Connector {
 
 	@Override
     public VirtualResource waitUntilCreation(Object id) throws ConnException {
-        logger.debug("Waiting for creation " + id);
+        logger.debug("Waiting for resource creation " + id);
         String jobId = (String) id;
-        logger.info("Waiting until node of job " + jobId + " is created");
+        logger.debug("Waiting until node of job " + jobId + " is created");
 
         try {
             JobDescription jd = client.getJobDescription(jobId);
-            logger.info("VM State is " + jd.getProperty("JobState"));
+            logger.debug("Job State is " + jd.getProperty("JobState"));
             int tries = 0;
             while (jd.getProperty("JobState") == null || !jd.getProperty("JobState").equals(RUNNING)) {
-                if (jd.getProperty("JobState").equals(FAILED)) {
+            	
+            	if (jd.getProperty("JobState").equals(FAILED)) {
                     logger.error("Error waiting for VM Creation. Middleware has return an error state");
                     throw new ConnException("Error waiting for VM Creation. Middleware has return an error state");
                 }
@@ -365,6 +366,7 @@ public class SLURMConnector extends Connector {
                 Thread.sleep(POLLING_INTERVAL * 1_000);
 
                 jd = client.getJobDescription(jobId);
+                logger.debug("Job State is " + jd.getProperty("JobState"));
             }
             
             client.addNodesToMain(jobId, jd);
@@ -372,7 +374,8 @@ public class SLURMConnector extends Connector {
             // Create Virtual Resource
             VirtualResource vr = new VirtualResource();
             vr.setId(jobId);
-            String resourceName=jd.getNodeList().get(0)+network;
+            String resourceName = jd.getNodeList().get(0)+network;
+            logger.debug("Setting resource ip: "+ resourceName);
             vmidToHostName.put(jobId,resourceName);
             vr.setIp(resourceName);
             vr.setProperties(null);
@@ -402,22 +405,27 @@ public class SLURMConnector extends Connector {
     @Override
     public void destroy(Object id) {
         String jobId = (String) id;
-        logger.debug("Destroying VM "+ jobId);
+        logger.debug("Destroying node for job "+ jobId);
         try {
         	String resourceName = vmidToHostName.get(jobId);
-        	if (!network.isEmpty()){
-        		//erase network for resourceName
-        		resourceName = resourceName.substring(0,resourceName.indexOf(network));
+        	if (resourceName != null && !resourceName.isEmpty()){
+        		if (!network.isEmpty()){
+        	        //erase network for resourceName
+        			resourceName = resourceName.substring(0,resourceName.indexOf(network));
+        		}
+        		logger.debug("Deleting node "+resourceName);
+        		client.deleteCompute(resourceName);
+        	}else{
+        		logger.debug("Node not found cancelling job "+ jobId);
         	}
-            client.deleteCompute(resourceName);
             vmidToHardwareRequest.remove(jobId);
             vmidToSoftwareRequest.remove(jobId);
             vmidToHostName.remove(jobId);
             
         } catch (ConnClientException cce) {
-            logger.error("Exception waiting for VM Destruction", cce);
+            logger.error("Exception waiting for Node Destruction", cce);
         }
-        logger.debug("VM "+ jobId+ " destroyed.");
+        logger.debug("Node for job "+ jobId+ " destroyed.");
         currentNodes--;
     }
 
