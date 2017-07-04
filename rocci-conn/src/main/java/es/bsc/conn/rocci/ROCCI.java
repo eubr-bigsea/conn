@@ -18,6 +18,7 @@ import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+
 /**
  * Implementation of ROCCI Connector version 4.2.5
  *
@@ -331,11 +332,6 @@ public class ROCCI extends Connector {
         vmidToSoftwareRequest.remove(vmId);
     }
 
-    public void attachLink(String vmId, String link) {
-        LOGGER.info(" Attach link " + link + " to VM " + vmId + " with rOCCI connector");
-        client.attachLink(vmId, link);
-    }
-
     @Override
     public float getPriceSlot(VirtualResource virtualResource) {
         return virtualResource.getHd().getPricePerUnit();
@@ -344,6 +340,17 @@ public class ROCCI extends Connector {
     @Override
     public void close() {
         // Nothing to do
+    }
+
+    /**
+     * Attaches a link to a given VMId
+     * 
+     * @param vmId
+     * @param link
+     */
+    public void attachLink(String vmId, String link) {
+        LOGGER.info(" Attach link " + link + " to VM " + vmId + " with rOCCI connector");
+        client.attachLink(vmId, link);
     }
 
     private void getHardwareInformation(String vmId, HardwareDescription hd) throws ConnClientException {

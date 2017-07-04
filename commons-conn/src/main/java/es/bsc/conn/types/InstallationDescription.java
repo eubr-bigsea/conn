@@ -1,123 +1,146 @@
 package es.bsc.conn.types;
 
+/**
+ * Implementation of the installation description
+ *
+ */
 public class InstallationDescription {
 
-	private String installDir;
-	private String appDir;
-	private String classpath;
-	private String pythonPath;
-	private String libraryPath;
-	private String workingDir;
-	private int limitOfTasks;
+    private String installDir;
+    private String appDir;
+    private String classpath;
+    private String pythonPath;
+    private String libraryPath;
+    private String workingDir;
+    private int limitOfTasks;
 
-	public InstallationDescription (String installDir, String appDir, String classpath, String pythonpath, 
-			String libraryPath, String workingDir, int limitOfTasks){
-		this.installDir = installDir;
-		this.appDir = appDir;
-		this.classpath = classpath;
-		this.pythonPath = pythonpath;
-		this.libraryPath = libraryPath;
-		this.workingDir = workingDir;
-		this.limitOfTasks = limitOfTasks;
-	}
 
-	/**
-	 * @return the limitOfTasks
-	 */
-	public int getLimitOfTasks() {
-		return limitOfTasks;
-	}
+    /**
+     * New installation description instance
+     * 
+     * @param installDir
+     * @param appDir
+     * @param classpath
+     * @param pythonpath
+     * @param libraryPath
+     * @param workingDir
+     * @param limitOfTasks
+     */
+    public InstallationDescription(String installDir, String appDir, String classpath, String pythonpath, String libraryPath,
+            String workingDir, int limitOfTasks) {
 
-	/**
-	 * @param limitOfTasks the limitOfTasks to set
-	 */
-	public void setLimitOfTasks(int limitOfTasks) {
-		this.limitOfTasks = limitOfTasks;
-	}
+        this.installDir = installDir;
+        this.appDir = appDir;
+        this.classpath = classpath;
+        this.pythonPath = pythonpath;
+        this.libraryPath = libraryPath;
+        this.workingDir = workingDir;
+        this.limitOfTasks = limitOfTasks;
+    }
 
-	/**
-	 * @return the installDir
-	 */
-	public String getInstallDir() {
-		return installDir;
-	}
+    /**
+     * @return the limitOfTasks
+     */
+    public int getLimitOfTasks() {
+        return limitOfTasks;
+    }
 
-	/**
-	 * @param installDir the installDir to set
-	 */
-	public void setInstallDir(String installDir) {
-		this.installDir = installDir;
-	}
+    /**
+     * @param limitOfTasks
+     *            the limitOfTasks to set
+     */
+    public void setLimitOfTasks(int limitOfTasks) {
+        this.limitOfTasks = limitOfTasks;
+    }
 
-	/**
-	 * @return the appDir
-	 */
-	public String getAppDir() {
-		return appDir;
-	}
+    /**
+     * @return the installDir
+     */
+    public String getInstallDir() {
+        return installDir;
+    }
 
-	/**
-	 * @param appDir the appDir to set
-	 */
-	public void setAppDir(String appDir) {
-		this.appDir = appDir;
-	}
+    /**
+     * @param installDir
+     *            the installDir to set
+     */
+    public void setInstallDir(String installDir) {
+        this.installDir = installDir;
+    }
 
-	/**
-	 * @return the classpath
-	 */
-	public String getClasspath() {
-		return classpath;
-	}
+    /**
+     * @return the appDir
+     */
+    public String getAppDir() {
+        return appDir;
+    }
 
-	/**
-	 * @param classpath the classpath to set
-	 */
-	public void setClasspath(String classpath) {
-		this.classpath = classpath;
-	}
+    /**
+     * @param appDir
+     *            the appDir to set
+     */
+    public void setAppDir(String appDir) {
+        this.appDir = appDir;
+    }
 
-	/**
-	 * @return the pythonPath
-	 */
-	public String getPythonPath() {
-		return pythonPath;
-	}
+    /**
+     * @return the classpath
+     */
+    public String getClasspath() {
+        return classpath;
+    }
 
-	/**
-	 * @param pythonPath the pythonPath to set
-	 */
-	public void setPythonPath(String pythonPath) {
-		this.pythonPath = pythonPath;
-	}
+    /**
+     * @param classpath
+     *            the classpath to set
+     */
+    public void setClasspath(String classpath) {
+        this.classpath = classpath;
+    }
 
-	/**
-	 * @return the libraryPath
-	 */
-	public String getLibraryPath() {
-		return libraryPath;
-	}
+    /**
+     * @return the pythonPath
+     */
+    public String getPythonPath() {
+        return pythonPath;
+    }
 
-	/**
-	 * @param libraryPath the libraryPath to set
-	 */
-	public void setLibraryPath(String libraryPath) {
-		this.libraryPath = libraryPath;
-	}
+    /**
+     * @param pythonPath
+     *            the pythonPath to set
+     */
+    public void setPythonPath(String pythonPath) {
+        this.pythonPath = pythonPath;
+    }
 
-	/**
-	 * @return the workingDir
-	 */
-	public String getWorkingDir() {
-		return workingDir;
-	}
+    /**
+     * @return the libraryPath
+     */
+    public String getLibraryPath() {
+        return libraryPath;
+    }
 
-	/**
-	 * @param workingDir the workingDir to set
-	 */
-	public void setWorkingDir(String workingDir) {
-		this.workingDir = workingDir;
-	}
-	
-	
+    /**
+     * @param libraryPath
+     *            the libraryPath to set
+     */
+    public void setLibraryPath(String libraryPath) {
+        this.libraryPath = libraryPath;
+    }
+
+    /**
+     * @return the workingDir
+     */
+    public String getWorkingDir() {
+        return workingDir;
+    }
+
+    /**
+     * @param workingDir
+     *            the workingDir to set
+     */
+    public void setWorkingDir(String workingDir) {
+        this.workingDir = workingDir;
+    }
+
 }

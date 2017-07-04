@@ -3,6 +3,7 @@ package es.bsc.conn.types;
 import java.util.LinkedList;
 import java.util.List;
 
+
 /**
  * Implementation of a Virtual Resource Software Description
  *
@@ -16,7 +17,7 @@ public class SoftwareDescription {
 
     // Applications
     protected List<String> appSoftware = new LinkedList<>();
-    
+
     protected InstallationDescription installation;
 
 
@@ -36,6 +37,7 @@ public class SoftwareDescription {
      * @param operatingSystemDistribution
      * @param operatingSystemVersion
      * @param appSoftware
+     * @param installation
      */
     public SoftwareDescription(String operatingSystemType, String operatingSystemDistribution, String operatingSystemVersion,
             List<String> appSoftware, InstallationDescription installation) {
@@ -74,9 +76,7 @@ public class SoftwareDescription {
         return operatingSystemDistribution;
     }
 
-    
-
-	/**
+    /**
      * Sets the operating system distribution
      * 
      * @param osDistribution
@@ -120,18 +120,23 @@ public class SoftwareDescription {
     public void setAppSoftware(List<String> appSoftware) {
         this.appSoftware = appSoftware;
     }
-    
-    /** Get the COMPSs and Application for the image installation details
-	 * @return the installation
-	 */
-	public InstallationDescription getInstallation() {
-		return installation;
-	}
 
-	/**Get the COMPSs and Application for the image installation details
-	 * @param installation the installation to set
-	 */
-	public void setInstallation(InstallationDescription installation) {
-		this.installation = installation;
-	}
+    /**
+     * Get the COMPSs and Application for the image installation details
+     * 
+     * @return the installation
+     */
+    public InstallationDescription getInstallation() {
+        return installation;
+    }
+
+    /**
+     * Get the COMPSs and Application for the image installation details
+     * 
+     * @param installation
+     *            the installation to set
+     */
+    public void setInstallation(InstallationDescription installation) {
+        this.installation = installation;
+    }
 }
