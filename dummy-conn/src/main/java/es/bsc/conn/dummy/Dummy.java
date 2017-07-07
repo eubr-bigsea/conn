@@ -7,6 +7,7 @@ import es.bsc.conn.types.HardwareDescription;
 import es.bsc.conn.types.SoftwareDescription;
 import es.bsc.conn.types.VirtualResource;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -27,7 +28,9 @@ public class Dummy extends Connector {
     private static final String BASE_IP = "127.0.0.";
     private static AtomicInteger nextId = new AtomicInteger(BASE_ID);
 
-
+ // Information about requests
+    private final Map<TestEnvId, HardwareDescription> idToHardwareRequest = new HashMap<>();
+    private final Map<TestEnvId, SoftwareDescription> idToSoftwareRequest = new HashMap<>();
     /**
      * Initializes the Dummy connector with the given properties
      * 
@@ -45,6 +48,8 @@ public class Dummy extends Connector {
         LOGGER.debug("Software Description: " + sd);
 
         TestEnvId envId = new TestEnvId();
+        idToHardwareRequest.put(envId, hd);
+        idToSoftwareRequest.put(envId, sd);
 
         LOGGER.info("Assigned ID: " + envId);
         return envId;
@@ -62,6 +67,8 @@ public class Dummy extends Connector {
         VirtualResource vr = new VirtualResource();
         vr.setId(id);
         vr.setIp(BASE_IP + nextId.getAndIncrement());
+        vr.setHd(idToHardwareRequest.get((TestEnvId)id));
+        vr.setSd(idToSoftwareRequest.get((TestEnvId)id));
 
         return vr;
     }
@@ -69,6 +76,9 @@ public class Dummy extends Connector {
     @Override
     public void destroy(Object id) {
         LOGGER.info("Deleting VirtualResource " + id);
+        idToHardwareRequest.remove((TestEnvId)id);
+        idToSoftwareRequest.get((TestEnvId)id);
+        
     }
 
     @Override
