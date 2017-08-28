@@ -67,7 +67,7 @@ public class SLURMConnector extends Connector {
         if (masterName == null || masterName.isEmpty()) {
             throw new ConnException("Unable to get master_name. Property is empty");
         }
-        String appLogdir = System.getProperty("it.appLogDir");
+        String appLogdir = System.getProperty("compss.appLogDir");
         if (appLogdir == null) {
             throw new ConnException("Unable to get app log dir");
         }
@@ -118,7 +118,7 @@ public class SLURMConnector extends Connector {
         // COMMAND
         String installDir = instDesc.getInstallDir();
         if (installDir == null) {
-            installDir = System.getenv("IT_HOME");
+            installDir = System.getenv("COMPSS_HOME");
             if (installDir == null) {
                 throw new ConnException("Unable to get COMPSs installation directory");
             }
@@ -214,14 +214,14 @@ public class SLURMConnector extends Connector {
         script.append(" " + limitOfTasks);
 
         // uuid
-        String uuid = System.getProperty("it.uuid");
+        String uuid = System.getProperty("compss.uuid");
         if (uuid == null || uuid.isEmpty() || "null".equals(uuid)) {
             throw new ConnException("Unable to get uuid");
         }
         script.append(" " + uuid);
 
         // lang
-        String lang = System.getProperty("it.lang");
+        String lang = System.getProperty("compss.lang");
         if (lang == null || lang.isEmpty() || "null".equals(lang)) {
             throw new ConnException("Unable to get lang");
         }
@@ -250,14 +250,14 @@ public class SLURMConnector extends Connector {
         script.append(" " + pythonPath);
 
         // tracing
-        String tracing = System.getProperty("it.tracing");
+        String tracing = System.getProperty("compss.tracing");
         if (tracing == null || tracing.isEmpty() || "null".equals(tracing)) {
             tracing = "0";
         }
         script.append(" " + tracing);
 
         // extrae file
-        String extraeFile = System.getProperty("it.extrae.file");
+        String extraeFile = System.getProperty("compss.extrae.file");
         if (extraeFile == null || extraeFile.isEmpty() || "null".equals(extraeFile)) {
             extraeFile = "null";
         }
@@ -267,21 +267,21 @@ public class SLURMConnector extends Connector {
         script.append(" " + (client.getInitialNodes() + currentNodes));
 
         // Configure storage
-        String storageConf = System.getProperty("it.storage.conf");
+        String storageConf = System.getProperty("compss.storage.conf");
         if (storageConf == null || storageConf.isEmpty() || "null".equals(storageConf)) {
             storageConf = "null";
         }
         script.append(" " + storageConf);
 
         // Task execution
-        String executionType = System.getProperty("it.task.execution");
+        String executionType = System.getProperty("compss.task.execution");
         if (executionType == null || executionType.isEmpty() || "null".equals(executionType)) {
             executionType = "compss";
         }
         script.append(" " + executionType);
 
         // Persistent c flag
-        String persistentC = System.getProperty("it.worker.persistent.c");
+        String persistentC = System.getProperty("compss.worker.persistent.c");
         if (persistentC == null || persistentC.isEmpty() || "null".equals(persistentC)) {
             persistentC = "false";
         }
