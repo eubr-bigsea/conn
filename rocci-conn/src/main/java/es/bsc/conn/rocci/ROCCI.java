@@ -47,6 +47,7 @@ public class ROCCI extends Connector {
     private static final String PROP_ACTION = "action";
     private static final String PROP_MIXIN = "mixin";
     private static final String PROP_LINK = "link";
+    private static final String PROP_LINK2 = "link2";
     private static final String PROP_TRIGGER_ACTION = "trigger-action";
     private static final String PROP_LOG = "log-to";
     private static final String PROP_DUMP_MODEL = "dump-model";
@@ -202,6 +203,11 @@ public class ROCCI extends Connector {
         if (propLink != null) {
             cmdString.add(ROCCI_PROP_LINK + propLink);
         }
+        
+        String propLink2 = props.get(PROP_LINK2);
+        if (propLink2 != null) {
+            cmdString.add(ROCCI_PROP_LINK + propLink2);
+        }
 
         String propTriggerAction = props.get(PROP_TRIGGER_ACTION);
         if (propTriggerAction != null) {
@@ -238,6 +244,9 @@ public class ROCCI extends Connector {
         if (owner != null && jobName != null) {
             attributes = owner + "-" + jobName;
         }
+        
+        LOGGER.debug("cmdString : " + cmdString);
+        LOGGER.debug("attributes: " + attributes);
 
         // Instantiate ROCCI client
         client = new RocciClient(cmdString, attributes);
