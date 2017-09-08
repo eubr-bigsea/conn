@@ -297,9 +297,18 @@ public class ROCCI extends Connector {
         } while (status == null || !"active".equals(status));
 
         // Retrieve IP
-        String ip = null;
+        String[] ips = null;
+        String local_ip = null;
         try {
-            ip = client.getResourceAddress(vmId);
+            ips = client.getResourceAddress(vmId);
+            for (String s: ips){
+                // Warning: if the local network of a different cloud differs
+                //          from standard 192.168.XXX.XXX needs to be included
+                //          in this if statement.
+                if(s.startsWith("192.168")){
+                    local_ip = s;
+                }
+            }
         } catch (ConnClientException cce) {
             throw new ConnException("Error retrieving resource address from client", cce);
         }
@@ -307,7 +316,7 @@ public class ROCCI extends Connector {
         // Create Virtual Resource
         VirtualResource vr = new VirtualResource();
         vr.setId(vmId);
-        vr.setIp(ip);
+        vr.setIp(local_ip);
         vr.setProperties(null);
 
         HardwareDescription hd = vmidToHardwareRequest.get(vmId);
