@@ -62,11 +62,6 @@ public class SLURMConnector extends Connector {
      */
     public SLURMConnector(Map<String, String> props) throws ConnException {
         super(props);
-
-        String masterName = props.get("master_name");
-        if (masterName == null || masterName.isEmpty()) {
-            throw new ConnException("Unable to get master_name. Property is empty");
-        }
         String appLogdir = System.getProperty("compss.appLogDir");
         if (appLogdir == null) {
             throw new ConnException("Unable to get app log dir");
@@ -77,7 +72,18 @@ public class SLURMConnector extends Connector {
         } else {
             throw new ConnException("Unable to create SLURM connector log dir");
         }
-        this.client = new SlurmClient(props.get("master_name"));
+        
+        String masterName = props.get("master_name");
+        if (masterName == null || masterName.isEmpty()) {
+            throw new ConnException("Unable to get master_name. Property is empty");
+        }
+        boolean ssh = false;
+        String sshStr = props.get("slurm_over_ssh");
+        if (sshStr != null && !sshStr.isEmpty()) {
+            ssh = Boolean.parseBoolean(sshStr);
+        }
+        this.client = new SlurmClient(masterName, ssh);
+        
         this.network = props.get("network");
         if (this.network == null) {
             this.network = "";
