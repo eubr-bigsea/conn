@@ -9,10 +9,10 @@ import es.bsc.conn.exceptions.NonInstantiableException;
 public class Loggers {
 
     // Integrated Toolkit
-    public static final String IT = "integratedtoolkit";
+    public static final String COMPSS = "es.bsc.compss";
 
     // Root connectors logger name
-    public static final String CONNECTORS = IT + ".Connectors";
+    public static final String CONNECTORS = COMPSS + ".Connectors";
     public static final String CONN = CONNECTORS + ".Conn";
 
     // Specific connector client loggers for each implementation

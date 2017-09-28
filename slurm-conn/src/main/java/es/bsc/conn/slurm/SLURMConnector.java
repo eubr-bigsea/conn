@@ -82,6 +82,7 @@ public class SLURMConnector extends Connector {
         if (sshStr != null && !sshStr.isEmpty()) {
             ssh = Boolean.parseBoolean(sshStr);
         }
+        LOGGER.debug("Starting Slurm client for master in "+masterName+" and ssh "+ssh);
         this.client = new SlurmClient(masterName, ssh);
         
         this.network = props.get("network");
