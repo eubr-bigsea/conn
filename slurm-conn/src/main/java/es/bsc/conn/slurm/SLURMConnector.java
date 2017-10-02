@@ -64,25 +64,25 @@ public class SLURMConnector extends Connector {
         super(props);
         String appLogdir = System.getProperty("compss.appLogDir");
         if (appLogdir == null) {
-            throw new ConnException("Unable to get app log dir");
+            throw new ConnException("[Connector] Unable to get app log dir");
         }
         File f = new File(appLogdir + File.separator + "slurm-conn-log");
         if (f.mkdirs()) {
             logDir = f.getAbsolutePath();
         } else {
-            throw new ConnException("Unable to create SLURM connector log dir");
+            throw new ConnException(" [Connector] Unable to create SLURM connector log dir");
         }
         
         String masterName = props.get("master_name");
         if (masterName == null || masterName.isEmpty()) {
-            throw new ConnException("Unable to get master_name. Property is empty");
+            throw new ConnException(" [Connector] Unable to get master_name. Property is empty");
         }
         boolean ssh = false;
         String sshStr = props.get("slurm_over_ssh");
         if (sshStr != null && !sshStr.isEmpty()) {
             ssh = Boolean.parseBoolean(sshStr);
         }
-        LOGGER.debug("Starting Slurm client for master in "+masterName+" and ssh "+ssh);
+        LOGGER.debug("[Connector] Starting Slurm client for master in "+masterName+" and ssh "+ssh);
         this.client = new SlurmClient(masterName, ssh);
         
         this.network = props.get("network");
@@ -105,11 +105,11 @@ public class SLURMConnector extends Connector {
             VirtualResource vr = new VirtualResource(jobId, hd, sd, prop);
             return vr.getId();
         } catch (ConnClientException ce) {
-            LOGGER.error("Exception submitting vm creation", ce);
+            LOGGER.error("[Connector] Exception submitting job for creation", ce);
             currentNodes--;
             throw new ConnException(ce);
         } catch (Exception e) {
-            LOGGER.error("Exception submitting vm creation", e);
+            LOGGER.error("[Connector] Exception submitting job for node creation", e);
             throw new ConnException(e);
         }
     }
@@ -127,7 +127,7 @@ public class SLURMConnector extends Connector {
         if (installDir == null) {
             installDir = System.getenv("COMPSS_HOME");
             if (installDir == null) {
-                throw new ConnException("Unable to get COMPSs installation directory");
+                throw new ConnException("[Connector] Unable to get COMPSs installation directory");
             }
         }
         if (hd.getImageName() != null && !hd.getImageName().isEmpty() && !"None".equals(hd.getImageName())) {
@@ -297,27 +297,27 @@ public class SLURMConnector extends Connector {
         File runScript = new File(logDir + File.separator + "run_" + jobName);
         try {
             if (!runScript.createNewFile()) {
-                throw new IOException("ERROR: File already exists");
+                throw new IOException("[Connector] ERROR: File already exists");
             }
             if (!runScript.setExecutable(true)) {
-                throw new IOException("ERROR: Cannot make the file executable");
+                throw new IOException("[Connector] ERROR: Cannot make the file executable");
             }
         } catch (IOException ioe) {
-            throw new ConnException("Exception creating script", ioe);
+            throw new ConnException("[Connector] Exception creating script", ioe);
         }
 
         try (FileOutputStream fos = new FileOutputStream(runScript)) {
             fos.write(script.toString().getBytes());
             return stdFlags + " " + runScript.getAbsolutePath();
         } catch (IOException e) {
-            throw new ConnException("Exception writting script", e);
+            throw new ConnException("[Connector] Exception writting script", e);
         }
     }
 
     private String getPWD() throws ConnException {
         String pwd = System.getenv("PWD");
         if (pwd == null) {
-            throw new ConnException("Unable to get PWD directory");
+            throw new ConnException("[Connector] Unable to get PWD directory");
         }
         return pwd;
     }
@@ -346,24 +346,24 @@ public class SLURMConnector extends Connector {
 
     @Override
     public VirtualResource waitUntilCreation(Object id) throws ConnException {
-        LOGGER.debug("Waiting for resource creation " + id);
+        LOGGER.debug("[Connector] Waiting for resource creation " + id);
         String jobId = (String) id;
-        LOGGER.debug("Waiting until node of job " + jobId + " is created");
+        LOGGER.debug("[Connector] Waiting until node of job " + jobId + " is created");
 
         try {
             JobDescription jd = client.getJobDescription(jobId);
-            LOGGER.debug("Job State is " + jd.getProperty(JOB_STATE));
+            LOGGER.debug("[Connector] Job State is " + jd.getProperty(JOB_STATE));
             int tries = 0;
             while (jd.getProperty(JOB_STATE) == null || !jd.getProperty(JOB_STATE).equals(RUNNING)) {
                 if (jd.getProperty(JOB_STATE).equals(FAILED)) {
-                    LOGGER.error("Error waiting for VM Creation. Middleware has return an error state");
-                    throw new ConnException("Error waiting for VM Creation. Middleware has return an error state");
+                    LOGGER.error("[Connector] Error waiting for VM Creation. Middleware has return an error state");
+                    throw new ConnException("[Connector] Error waiting for VM Creation. Middleware has return an error state");
                 }
                 if (tries * POLLING_INTERVAL > TIMEOUT) {
                     client.cancelJob(jobId);
                     vmidToHardwareRequest.remove(jobId);
                     vmidToSoftwareRequest.remove(jobId);
-                    throw new ConnException("Maximum Job creation time reached.");
+                    throw new ConnException("[Connector] Maximum Job creation time reached.");
                 }
 
                 tries++;
@@ -371,7 +371,7 @@ public class SLURMConnector extends Connector {
                 Thread.sleep(POLLING_INTERVAL * 1_000);
 
                 jd = client.getJobDescription(jobId);
-                LOGGER.debug("Job State is " + jd.getProperty(JOB_STATE));
+                LOGGER.debug("[Connector] Job State is " + jd.getProperty(JOB_STATE));
             }
 
             client.addNodesToMain(jobId, jd);
@@ -380,14 +380,14 @@ public class SLURMConnector extends Connector {
             VirtualResource vr = new VirtualResource();
             vr.setId(jobId);
             String resourceName = jd.getNodeList().get(0) + network;
-            LOGGER.debug("Setting resource ip: " + resourceName);
+            LOGGER.debug("[Connector] Setting resource ip: " + resourceName);
             vmidToHostName.put(jobId, resourceName);
             vr.setIp(resourceName);
             vr.setProperties(null);
 
             HardwareDescription hd = vmidToHardwareRequest.get(jobId);
             if (hd == null) {
-                throw new ConnException("Unregistered hardware description for job " + jobId);
+                throw new ConnException("[Connector] Unregistered hardware description for job " + jobId);
             }
             /*
              * hd.setTotalComputingUnits(vmd.getCpus()); hd.setMemorySize(vmd.getRamMb()/1024);
@@ -397,13 +397,13 @@ public class SLURMConnector extends Connector {
 
             SoftwareDescription sd = vmidToSoftwareRequest.get(jobId);
             if (sd == null) {
-                throw new ConnException("Unregistered software description for job " + jobId);
+                throw new ConnException("[Connector] Unregistered software description for job " + jobId);
             }
             sd.setOperatingSystemType("Linux");
             vr.setSd(sd);
             return vr;
         } catch (ConnClientException | InterruptedException e) {
-            LOGGER.error("Exception waiting for VM Creation");
+            LOGGER.error("[Connector] Exception waiting for VM Creation");
             throw new ConnException(e);
         }
     }
@@ -411,7 +411,7 @@ public class SLURMConnector extends Connector {
     @Override
     public void destroy(Object id) {
         String jobId = (String) id;
-        LOGGER.debug("Destroying node for job " + jobId);
+        LOGGER.debug("[Connector] Destroying node for job " + jobId);
         try {
             String resourceName = vmidToHostName.get(jobId);
             if (resourceName != null && !resourceName.isEmpty()) {
@@ -419,19 +419,19 @@ public class SLURMConnector extends Connector {
                     // erase network for resourceName
                     resourceName = resourceName.substring(0, resourceName.indexOf(network));
                 }
-                LOGGER.debug("Deleting node " + resourceName);
+                LOGGER.debug("[Connector] Deleting node " + resourceName);
                 client.deleteCompute(resourceName);
             } else {
-                LOGGER.debug("Node not found cancelling job " + jobId);
+                LOGGER.debug("[Connector] Node not found cancelling job " + jobId);
             }
             vmidToHardwareRequest.remove(jobId);
             vmidToSoftwareRequest.remove(jobId);
             vmidToHostName.remove(jobId);
 
         } catch (ConnClientException cce) {
-            LOGGER.error("Exception waiting for Node Destruction", cce);
+            LOGGER.error("[Connector] Exception waiting for Node Destruction", cce);
         }
-        LOGGER.debug("Node for job " + jobId + " destroyed.");
+        LOGGER.debug("[Connector] Node for job " + jobId + " destroyed.");
         currentNodes--;
     }
 
