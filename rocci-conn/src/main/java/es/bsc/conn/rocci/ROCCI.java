@@ -1,5 +1,14 @@
 package es.bsc.conn.rocci;
 
+import java.net.Inet4Address;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import es.bsc.conn.Connector;
 import es.bsc.conn.clients.exceptions.ConnClientException;
 import es.bsc.conn.clients.rocci.RocciClient;
@@ -10,402 +19,399 @@ import es.bsc.conn.types.Processor;
 import es.bsc.conn.types.SoftwareDescription;
 import es.bsc.conn.types.VirtualResource;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-
 /**
  * Implementation of ROCCI Connector version 4.2.5
  *
  */
 public class ROCCI extends Connector {
 
-    // ROCCI Client API version
-    private static final String ROCCI_CLIENT_VERSION = "4.2.5";
+	// ROCCI Client API version
+	private static final String ROCCI_CLIENT_VERSION = "4.2.5";
 
-    // Properties' names
-    private static final String PROP_AUTH = "auth";
-    private static final String PROP_TIMEOUT = "timeout";
-    private static final String PROP_USERNAME = "username";
-    private static final String PROP_PASSW = "password";
-    private static final String PROP_TOKEN = "token";
-    private static final String PROP_CA_PATH = "ca-path";
-    private static final String PROP_CA_FILE = "ca-file";
-    private static final String PROP_SKIP_CA_CHECK = "skip-ca-check";
-    private static final String PROP_FILTER = "filter";
-    private static final String PROP_USER_CREDENTIALS = "user-cred";
-    private static final String PROP_VOMS = "voms";
-    private static final String PROP_MEDIA_TYPE = "media-type";
-    private static final String PROP_RESOURCE = "resource";
-    private static final String PROP_ATTRIBUTES = "attributes";
-    private static final String PROP_CONTEXT = "context";
-    private static final String PROP_ACTION = "action";
-    private static final String PROP_MIXIN = "mixin";
-    private static final String PROP_LINK = "link";
-    private static final String PROP_LINK2 = "link2";
-    private static final String PROP_TRIGGER_ACTION = "trigger-action";
-    private static final String PROP_LOG = "log-to";
-    private static final String PROP_DUMP_MODEL = "dump-model";
-    private static final String PROP_DEBUG = "debug";
-    private static final String PROP_VERBOSE = "verbose";
-    private static final String PROP_ATTR_OWNER = "owner";
-    private static final String PROP_ATTR_JOBNAME = "jobname";
+	// Properties' names
+	private static final String PROP_AUTH = "auth";
+	private static final String PROP_TIMEOUT = "timeout";
+	private static final String PROP_USERNAME = "username";
+	private static final String PROP_PASSW = "password";
+	private static final String PROP_TOKEN = "token";
+	private static final String PROP_CA_PATH = "ca-path";
+	private static final String PROP_CA_FILE = "ca-file";
+	private static final String PROP_SKIP_CA_CHECK = "skip-ca-check";
+	private static final String PROP_FILTER = "filter";
+	private static final String PROP_USER_CREDENTIALS = "user-cred";
+	private static final String PROP_VOMS = "voms";
+	private static final String PROP_MEDIA_TYPE = "media-type";
+	private static final String PROP_RESOURCE = "resource";
+	private static final String PROP_ATTRIBUTES = "attributes";
+	private static final String PROP_CONTEXT = "context";
+	private static final String PROP_ACTION = "action";
+	private static final String PROP_MIXIN = "mixin";
+	private static final String PROP_LINK = "link";
+	private static final String PROP_LINK2 = "link2";
+	private static final String PROP_TRIGGER_ACTION = "trigger-action";
+	private static final String PROP_LOG = "log-to";
+	private static final String PROP_DUMP_MODEL = "dump-model";
+	private static final String PROP_DEBUG = "debug";
+	private static final String PROP_VERBOSE = "verbose";
+	private static final String PROP_ATTR_OWNER = "owner";
+	private static final String PROP_ATTR_JOBNAME = "jobname";
 
-    // ROCCI Properties' names
-    private static final String ROCCI_PROP_SERVER = "--endpoint ";
-    private static final String ROCCI_PROP_AUTH = "--auth ";
-    private static final String ROCCI_PROP_TIMEOUT = "--timeout ";
-    private static final String ROCCI_PROP_USERNAME = "--username ";
-    private static final String ROCCI_PROP_PASSW = "--password ";
-    private static final String ROCCI_PROP_TOKEN = "--token";
-    private static final String ROCCI_PROP_CA_PATH = "--ca-path ";
-    private static final String ROCCI_PROP_CA_FILE = "--ca-file ";
-    private static final String ROCCI_PROP_SKIP_CA_CHECK = "--skip-ca-check ";
-    private static final String ROCCI_PROP_FILTER = "--filter ";
-    private static final String ROCCI_PROP_USER_CREDENTIALS = "--user-cred ";
-    private static final String ROCCI_PROP_VOMS = "--voms";
-    private static final String ROCCI_PROP_MEDIA_TYPE = "--media-type ";
-    private static final String ROCCI_PROP_RESOURCE = "--resource ";
-    private static final String ROCCI_PROP_ATTRIBUTES = "--attributes ";
-    private static final String ROCCI_PROP_CONTEXT = "--context ";
-    private static final String ROCCI_PROP_ACTION = "--action ";
-    private static final String ROCCI_PROP_MIXIN = "--mixin ";
-    private static final String ROCCI_PROP_LINK = "--link ";
-    private static final String ROCCI_PROP_TRIGGER_ACTION = "--trigger-action ";
-    private static final String ROCCI_PROP_LOG = "--log-to ";
-    private static final String ROCCI_PROP_DUMP_MODEL = "--dump-model";
-    private static final String ROCCI_PROP_DEBUG = "--debug";
-    private static final String ROCCI_PROP_VERBOSE = "--verbose";
-    private static final String ROCCI_PROP_OUTPUT_FORMAT = "--output-format json_extended_pretty";
+	// ROCCI Properties' names
+	private static final String ROCCI_PROP_SERVER = "--endpoint ";
+	private static final String ROCCI_PROP_AUTH = "--auth ";
+	private static final String ROCCI_PROP_TIMEOUT = "--timeout ";
+	private static final String ROCCI_PROP_USERNAME = "--username ";
+	private static final String ROCCI_PROP_PASSW = "--password ";
+	private static final String ROCCI_PROP_TOKEN = "--token";
+	private static final String ROCCI_PROP_CA_PATH = "--ca-path ";
+	private static final String ROCCI_PROP_CA_FILE = "--ca-file ";
+	private static final String ROCCI_PROP_SKIP_CA_CHECK = "--skip-ca-check ";
+	private static final String ROCCI_PROP_FILTER = "--filter ";
+	private static final String ROCCI_PROP_USER_CREDENTIALS = "--user-cred ";
+	private static final String ROCCI_PROP_VOMS = "--voms";
+	private static final String ROCCI_PROP_MEDIA_TYPE = "--media-type ";
+	private static final String ROCCI_PROP_RESOURCE = "--resource ";
+	private static final String ROCCI_PROP_ATTRIBUTES = "--attributes ";
+	private static final String ROCCI_PROP_CONTEXT = "--context ";
+	private static final String ROCCI_PROP_ACTION = "--action ";
+	private static final String ROCCI_PROP_MIXIN = "--mixin ";
+	private static final String ROCCI_PROP_LINK = "--link ";
+	private static final String ROCCI_PROP_TRIGGER_ACTION = "--trigger-action ";
+	private static final String ROCCI_PROP_LOG = "--log-to ";
+	private static final String ROCCI_PROP_DUMP_MODEL = "--dump-model";
+	private static final String ROCCI_PROP_DEBUG = "--debug";
+	private static final String ROCCI_PROP_VERBOSE = "--verbose";
+	private static final String ROCCI_PROP_OUTPUT_FORMAT = "--output-format json_extended_pretty";
 
-    // Logger
-    private static final Logger LOGGER = LogManager.getLogger(Loggers.ROCCI);
+	// Logger
+	private static final Logger LOGGER = LogManager.getLogger(Loggers.ROCCI);
 
-    // Retry time between petitions
-    private static final Integer RETRY_TIME = 5; // Seconds
+	// Retry time between petitions
+	private static final Integer RETRY_TIME = 5; // Seconds
 
-    // Client
-    private final RocciClient client;
+	// Client
+	private final RocciClient client;
 
-    // Information about requests
-    private final Map<String, HardwareDescription> vmidToHardwareRequest = new HashMap<>();
-    private final Map<String, SoftwareDescription> vmidToSoftwareRequest = new HashMap<>();
+	// Information about requests
+	private final Map<String, HardwareDescription> vmidToHardwareRequest = new HashMap<>();
+	private final Map<String, SoftwareDescription> vmidToSoftwareRequest = new HashMap<>();
 
+	/**
+	 * Initializes the ROCCI connector with the given properties
+	 *
+	 * @param props
+	 */
+	public ROCCI(Map<String, String> props) throws ConnException {
+		super(props);
 
-    /**
-     * Initializes the ROCCI connector with the given properties
-     *
-     * @param props
-     */
-    public ROCCI(Map<String, String> props) throws ConnException {
-        super(props);
+		// Log creation
+		LOGGER.info("Starting ROCCI v" + ROCCI_CLIENT_VERSION);
 
-        // Log creation
-        LOGGER.info("Starting ROCCI v" + ROCCI_CLIENT_VERSION);
+		// ROCCI client parameters setup
+		final ArrayList<String> cmdString = new ArrayList<>();
+		if (server != null) {
+			cmdString.add(ROCCI_PROP_SERVER + server);
+		}
 
-        // ROCCI client parameters setup
-        final ArrayList<String> cmdString = new ArrayList<>();
-        if (server != null) {
-            cmdString.add(ROCCI_PROP_SERVER + server);
-        }
+		String propAuth = props.get(PROP_AUTH);
+		if (propAuth != null) {
+			cmdString.add(ROCCI_PROP_AUTH + propAuth);
+		}
 
-        String propAuth = props.get(PROP_AUTH);
-        if (propAuth != null) {
-            cmdString.add(ROCCI_PROP_AUTH + propAuth);
-        }
+		String propTimeout = props.get(PROP_TIMEOUT);
+		if (propTimeout != null) {
+			cmdString.add(ROCCI_PROP_TIMEOUT + propTimeout);
+		}
 
-        String propTimeout = props.get(PROP_TIMEOUT);
-        if (propTimeout != null) {
-            cmdString.add(ROCCI_PROP_TIMEOUT + propTimeout);
-        }
+		String propUsername = props.get(PROP_USERNAME);
+		if (propUsername != null) {
+			cmdString.add(ROCCI_PROP_USERNAME + propUsername);
+		}
 
-        String propUsername = props.get(PROP_USERNAME);
-        if (propUsername != null) {
-            cmdString.add(ROCCI_PROP_USERNAME + propUsername);
-        }
+		String propPassword = props.get(PROP_PASSW);
+		if (propPassword != null) {
+			cmdString.add(ROCCI_PROP_PASSW + propPassword);
+		}
 
-        String propPassword = props.get(PROP_PASSW);
-        if (propPassword != null) {
-            cmdString.add(ROCCI_PROP_PASSW + propPassword);
-        }
+		String propToken = props.get(PROP_TOKEN);
+		if (propToken != null) {
+			cmdString.add(ROCCI_PROP_TOKEN + propToken);
+		}
 
-        String propToken = props.get(PROP_TOKEN);
-        if (propToken != null) {
-            cmdString.add(ROCCI_PROP_TOKEN + propToken);
-        }
+		String propCAPath = props.get(PROP_CA_PATH);
+		if (propCAPath != null) {
+			cmdString.add(ROCCI_PROP_CA_PATH + propCAPath);
+		}
 
-        String propCAPath = props.get(PROP_CA_PATH);
-        if (propCAPath != null) {
-            cmdString.add(ROCCI_PROP_CA_PATH + propCAPath);
-        }
+		String propCAFile = props.get(PROP_CA_FILE);
+		if (propCAFile != null) {
+			cmdString.add(ROCCI_PROP_CA_FILE + propCAFile);
+		}
 
-        String propCAFile = props.get(PROP_CA_FILE);
-        if (propCAFile != null) {
-            cmdString.add(ROCCI_PROP_CA_FILE + propCAFile);
-        }
+		String propSkipCACheck = props.get(PROP_SKIP_CA_CHECK);
+		if (propSkipCACheck != null) {
+			cmdString.add(ROCCI_PROP_SKIP_CA_CHECK + propSkipCACheck);
+		}
 
-        String propSkipCACheck = props.get(PROP_SKIP_CA_CHECK);
-        if (propSkipCACheck != null) {
-            cmdString.add(ROCCI_PROP_SKIP_CA_CHECK + propSkipCACheck);
-        }
+		String propFilter = props.get(PROP_FILTER);
+		if (propFilter != null) {
+			cmdString.add(ROCCI_PROP_FILTER + propFilter);
+		}
 
-        String propFilter = props.get(PROP_FILTER);
-        if (propFilter != null) {
-            cmdString.add(ROCCI_PROP_FILTER + propFilter);
-        }
+		String propUserCred = props.get(PROP_USER_CREDENTIALS);
+		if (propUserCred != null) {
+			cmdString.add(ROCCI_PROP_USER_CREDENTIALS + propUserCred);
+		}
 
-        String propUserCred = props.get(PROP_USER_CREDENTIALS);
-        if (propUserCred != null) {
-            cmdString.add(ROCCI_PROP_USER_CREDENTIALS + propUserCred);
-        }
+		String propVoms = props.get(PROP_VOMS);
+		if (propVoms != null) {
+			cmdString.add(ROCCI_PROP_VOMS + propVoms);
+		}
 
-        String propVoms = props.get(PROP_VOMS);
-        if (propVoms != null) {
-            cmdString.add(ROCCI_PROP_VOMS + propVoms);
-        }
+		String propMediaType = props.get(PROP_MEDIA_TYPE);
+		if (propMediaType != null) {
+			cmdString.add(ROCCI_PROP_MEDIA_TYPE + propMediaType);
+		}
 
-        String propMediaType = props.get(PROP_MEDIA_TYPE);
-        if (propMediaType != null) {
-            cmdString.add(ROCCI_PROP_MEDIA_TYPE + propMediaType);
-        }
+		String propResource = props.get(PROP_RESOURCE);
+		if (propResource != null) {
+			cmdString.add(ROCCI_PROP_RESOURCE + propResource);
+		}
 
-        String propResource = props.get(PROP_RESOURCE);
-        if (propResource != null) {
-            cmdString.add(ROCCI_PROP_RESOURCE + propResource);
-        }
+		String propAttributes = props.get(PROP_ATTRIBUTES);
+		if (propAttributes != null) {
+			cmdString.add(ROCCI_PROP_ATTRIBUTES + propAttributes);
+		}
 
-        String propAttributes = props.get(PROP_ATTRIBUTES);
-        if (propAttributes != null) {
-            cmdString.add(ROCCI_PROP_ATTRIBUTES + propAttributes);
-        }
+		String propContext = props.get(PROP_CONTEXT);
+		if (propContext != null) {
+			cmdString.add(ROCCI_PROP_CONTEXT + propContext);
+		}
 
-        String propContext = props.get(PROP_CONTEXT);
-        if (propContext != null) {
-            cmdString.add(ROCCI_PROP_CONTEXT + propContext);
-        }
+		String propAction = props.get(PROP_ACTION);
+		if (propAction != null) {
+			cmdString.add(ROCCI_PROP_ACTION + propAction);
+		}
 
-        String propAction = props.get(PROP_ACTION);
-        if (propAction != null) {
-            cmdString.add(ROCCI_PROP_ACTION + propAction);
-        }
+		String propMixin = props.get(PROP_MIXIN);
+		if (propMixin != null) {
+			cmdString.add(ROCCI_PROP_MIXIN + propMixin);
+		}
 
-        String propMixin = props.get(PROP_MIXIN);
-        if (propMixin != null) {
-            cmdString.add(ROCCI_PROP_MIXIN + propMixin);
-        }
+		String propLink = props.get(PROP_LINK);
+		if (propLink != null) {
+			cmdString.add(ROCCI_PROP_LINK + propLink);
+		}
 
-        String propLink = props.get(PROP_LINK);
-        if (propLink != null) {
-            cmdString.add(ROCCI_PROP_LINK + propLink);
-        }
-        
-        String propLink2 = props.get(PROP_LINK2);
-        if (propLink2 != null) {
-            cmdString.add(ROCCI_PROP_LINK + propLink2);
-        }
+		String propLink2 = props.get(PROP_LINK2);
+		if (propLink2 != null) {
+			cmdString.add(ROCCI_PROP_LINK + propLink2);
+		}
 
-        String propTriggerAction = props.get(PROP_TRIGGER_ACTION);
-        if (propTriggerAction != null) {
-            cmdString.add(ROCCI_PROP_TRIGGER_ACTION + propTriggerAction);
-        }
+		String propTriggerAction = props.get(PROP_TRIGGER_ACTION);
+		if (propTriggerAction != null) {
+			cmdString.add(ROCCI_PROP_TRIGGER_ACTION + propTriggerAction);
+		}
 
-        String propLog = props.get(PROP_LOG);
-        if (propLog != null) {
-            cmdString.add(ROCCI_PROP_LOG + propLog);
-        }
+		String propLog = props.get(PROP_LOG);
+		if (propLog != null) {
+			cmdString.add(ROCCI_PROP_LOG + propLog);
+		}
 
-        String propDumpModel = props.get(PROP_DUMP_MODEL);
-        if (propDumpModel != null) {
-            cmdString.add(ROCCI_PROP_DUMP_MODEL);
-        }
+		String propDumpModel = props.get(PROP_DUMP_MODEL);
+		if (propDumpModel != null) {
+			cmdString.add(ROCCI_PROP_DUMP_MODEL);
+		}
 
-        String propDebug = props.get(PROP_DEBUG);
-        if (propDebug != null) {
-            cmdString.add(ROCCI_PROP_DEBUG);
-        }
+		String propDebug = props.get(PROP_DEBUG);
+		if (propDebug != null) {
+			cmdString.add(ROCCI_PROP_DEBUG);
+		}
 
-        String propVerbose = props.get(PROP_VERBOSE);
-        if (propVerbose != null) {
-            cmdString.add(ROCCI_PROP_VERBOSE);
-        }
+		String propVerbose = props.get(PROP_VERBOSE);
+		if (propVerbose != null) {
+			cmdString.add(ROCCI_PROP_VERBOSE);
+		}
 
-        // Add output format
-        cmdString.add(ROCCI_PROP_OUTPUT_FORMAT);
+		// Add output format
+		cmdString.add(ROCCI_PROP_OUTPUT_FORMAT);
 
-        // ROCCI connector attributes setup
-        String owner = props.get(PROP_ATTR_OWNER);
-        String jobName = props.get(PROP_ATTR_JOBNAME);
-        String attributes = "";
-        if (owner != null && jobName != null) {
-            attributes = owner + "-" + jobName;
-        }
-        
-        LOGGER.debug("cmdString : " + cmdString);
-        LOGGER.debug("attributes: " + attributes);
+		// ROCCI connector attributes setup
+		String owner = props.get(PROP_ATTR_OWNER);
+		String jobName = props.get(PROP_ATTR_JOBNAME);
+		String attributes = "";
+		if (owner != null && jobName != null) {
+			attributes = owner + "-" + jobName;
+		}
 
-        // Instantiate ROCCI client
-        client = new RocciClient(cmdString, attributes);
-    }
+		LOGGER.debug("cmdString : " + cmdString);
+		LOGGER.debug("attributes: " + attributes);
 
-    @Override
-    public Object create(HardwareDescription hd, SoftwareDescription sd, Map<String, String> prop) throws ConnException {
-        try {
-            String instanceCode = hd.getImageType();
-            String vmId = client.createCompute(hd.getImageName(), instanceCode);
+		// Instantiate ROCCI client
+		client = new RocciClient(cmdString, attributes);
+	}
 
-            vmidToHardwareRequest.put(vmId, hd);
-            vmidToSoftwareRequest.put(vmId, sd);
+	@Override
+	public Object create(HardwareDescription hd, SoftwareDescription sd, Map<String, String> prop)
+			throws ConnException {
+		try {
+			String instanceCode = hd.getImageType();
+			String vmId = client.createCompute(hd.getImageName(), instanceCode);
 
-            VirtualResource vr = new VirtualResource(vmId, hd, sd, prop);
-            return vr.getId();
-        } catch (Exception e) {
-            LOGGER.error("Error creating a VM", e);
-            throw new ConnException("Error creating a VM", e);
-        }
-    }
+			vmidToHardwareRequest.put(vmId, hd);
+			vmidToSoftwareRequest.put(vmId, sd);
 
-    @Override
-    public VirtualResource waitUntilCreation(Object id) throws ConnException {
-        LOGGER.debug("Waiting for creation " + id);
+			VirtualResource vr = new VirtualResource(vmId, hd, sd, prop);
+			return vr.getId();
+		} catch (Exception e) {
+			LOGGER.error("Error creating a VM", e);
+			throw new ConnException("Error creating a VM", e);
+		}
+	}
 
-        String vmId = (String) id;
-        LOGGER.info("Waiting until VM " + vmId + " is created");
+	@Override
+	public VirtualResource waitUntilCreation(Object id) throws ConnException {
+		LOGGER.debug("Waiting for creation " + id);
 
-        Integer polls = 0;
-        int errors = 0;
-        String status = null;
-        do {
-            try {
-                Thread.sleep(RETRY_TIME * (long) 1_000);
-                if (RETRY_TIME * polls >= maxVMCreationTime * 60) {
-                    throw new ConnException("Maximum VM creation time reached.");
-                }
-                polls++;
-                status = client.getResourceStatus(vmId);
-            } catch (ConnClientException | ConnException | InterruptedException e) {
-                errors++;
-                if (errors == maxVMConnectionErrors) {
-                    LOGGER.error("ERROR_MSG = [\n\tError = " + e.getMessage() + "\n]");
-                    throw new ConnException("Error getting the status of the request", e);
-                }
-            }
-        } while (status == null || !"active".equals(status));
+		String vmId = (String) id;
+		LOGGER.info("Waiting until VM " + vmId + " is created");
 
-        // Retrieve IP
-        String[] ips = null;
-        String local_ip = null;
-        try {
-            ips = client.getResourceAddress(vmId);
-            for (String s: ips){
-                // Warning: if the local network of a different cloud differs
-                //          from standard 192.168.XXX.XXX needs to be included
-                //          in this if statement.
-                if(s.startsWith("192.168")){
-                    local_ip = s;
-                }
-            }
-        } catch (ConnClientException cce) {
-            throw new ConnException("Error retrieving resource address from client", cce);
-        }
+		Integer polls = 0;
+		int errors = 0;
+		String status = null;
+		do {
+			try {
+				Thread.sleep(RETRY_TIME * (long) 1_000);
+				if (RETRY_TIME * polls >= maxVMCreationTime * 60) {
+					throw new ConnException("Maximum VM creation time reached.");
+				}
+				polls++;
+				status = client.getResourceStatus(vmId);
+			} catch (ConnClientException | ConnException | InterruptedException e) {
+				errors++;
+				if (errors == maxVMConnectionErrors) {
+					LOGGER.error("ERROR_MSG = [\n\tError = " + e.getMessage() + "\n]");
+					throw new ConnException("Error getting the status of the request", e);
+				}
+			}
+		} while (status == null || !"active".equals(status));
 
-        // Create Virtual Resource
-        VirtualResource vr = new VirtualResource();
-        vr.setId(vmId);
-        vr.setIp(local_ip);
-        vr.setProperties(null);
+		// Retrieve IP
+		String[] ips = null;
+		String local_ip = null;
+		try {
+			ips = client.getResourceAddress(vmId);
 
-        HardwareDescription hd = vmidToHardwareRequest.get(vmId);
-        if (hd == null) {
-            throw new ConnException("Unregistered hardware description for vmId = " + vmId);
-        }
-        try {
-            getHardwareInformation(vmId, hd);
-        } catch (ConnClientException cce) {
-            throw new ConnException("Error retrieving resource hardware description of VM " + vmId + " from client", cce);
-        }
-        vr.setHd(hd);
+			for (String s : ips) {
+				// FIXME Serious hardcoding: if the local network of a different cloud differs
+				// from standard 192.168.XXX.XXX needs to be included
+				// in this if statement.
+				// IS THIS NEEDED?
+				if (s.startsWith("192.168")) {
+					local_ip = s;
+				}
+			}
+			if (local_ip == null) {
+				local_ip = ips[0];
+			}
+		} catch (ConnClientException cce) {
+			throw new ConnException("Error retrieving resource address from client", cce);
+		}
 
-        SoftwareDescription sd = vmidToSoftwareRequest.get(vmId);
-        if (sd == null) {
-            throw new ConnException("Unregistered software description for vmId = " + vmId);
-        }
-        sd.setOperatingSystemType("Linux");
-        vr.setSd(sd);
+		// Create Virtual Resource
+		VirtualResource vr = new VirtualResource();
+		vr.setId(vmId);
+		vr.setIp(local_ip);
+		vr.setProperties(null);
 
-        return vr;
-    }
+		HardwareDescription hd = vmidToHardwareRequest.get(vmId);
+		if (hd == null) {
+			throw new ConnException("Unregistered hardware description for vmId = " + vmId);
+		}
+		try {
+			getHardwareInformation(vmId, hd);
+		} catch (ConnClientException cce) {
+			throw new ConnException("Error retrieving resource hardware description of VM " + vmId + " from client",
+					cce);
+		}
+		vr.setHd(hd);
 
-    @Override
-    public void destroy(Object id) {
-        String vmId = (String) id;
-        LOGGER.info(" Destroy VM " + vmId + " with rOCCI connector");
+		SoftwareDescription sd = vmidToSoftwareRequest.get(vmId);
+		if (sd == null) {
+			throw new ConnException("Unregistered software description for vmId = " + vmId);
+		}
+		sd.setOperatingSystemType("Linux");
+		vr.setSd(sd);
 
-        client.deleteCompute(vmId);
-        vmidToHardwareRequest.remove(vmId);
-        vmidToSoftwareRequest.remove(vmId);
-    }
+		return vr;
+	}
 
-    @Override
-    public float getPriceSlot(VirtualResource virtualResource) {
-        return virtualResource.getHd().getPricePerUnit();
-    }
+	@Override
+	public void destroy(Object id) {
+		String vmId = (String) id;
+		LOGGER.info(" Destroy VM " + vmId + " with rOCCI connector");
 
-    @Override
-    public void close() {
-        // Nothing to do
-    }
+		client.deleteCompute(vmId);
+		vmidToHardwareRequest.remove(vmId);
+		vmidToSoftwareRequest.remove(vmId);
+	}
 
-    /**
-     * Attaches a link to a given VMId
-     * 
-     * @param vmId
-     * @param link
-     */
-    public void attachLink(String vmId, String link) {
-        LOGGER.info(" Attach link " + link + " to VM " + vmId + " with rOCCI connector");
-        client.attachLink(vmId, link);
-    }
+	@Override
+	public float getPriceSlot(VirtualResource virtualResource) {
+		return virtualResource.getHd().getPricePerUnit();
+	}
 
-    private void getHardwareInformation(String vmId, HardwareDescription hd) throws ConnClientException {
-        Object[] grantedHD = client.getHardwareDescription(vmId);
-        // grantedHD is of the form [memSize, storageSize, cores, architecture, speed]
-        Float memory = (Float) grantedHD[0];
-        Float storage = (Float) grantedHD[1];
-        Integer cores = (Integer) grantedHD[2];
-        String architecture = (String) grantedHD[3];
-        Float speed = (Float) grantedHD[4];
+	@Override
+	public void close() {
+		// Nothing to do
+	}
 
-        // Check cores and set default value is none
-        if (cores == null || cores < 0) {
-            cores = 1;
-        }
+	/**
+	 * Attaches a link to a given VMId
+	 * 
+	 * @param vmId
+	 * @param link
+	 */
+	public void attachLink(String vmId, String link) {
+		LOGGER.info(" Attach link " + link + " to VM " + vmId + " with rOCCI connector");
+		client.attachLink(vmId, link);
+	}
 
-        // Create a runtime processor
-        Processor runtimeProc = new es.bsc.conn.types.Processor();
-        runtimeProc.setComputingUnits(cores);
-        if (architecture != null && !architecture.isEmpty()) {
-            runtimeProc.setArchitecture(architecture);
-        }
-        if (speed != null) {
-            runtimeProc.setSpeed(speed);
-        }
-        List<Processor> procs = new ArrayList<>();
-        procs.add(runtimeProc);
+	private void getHardwareInformation(String vmId, HardwareDescription hd) throws ConnClientException {
+		Object[] grantedHD = client.getHardwareDescription(vmId);
+		// grantedHD is of the form [memSize, storageSize, cores, architecture, speed]
+		Float memory = (Float) grantedHD[0];
+		Float storage = (Float) grantedHD[1];
+		Integer cores = (Integer) grantedHD[2];
+		String architecture = (String) grantedHD[3];
+		Float speed = (Float) grantedHD[4];
 
-        // Add Hardware information
-        if (memory != null) {
-            hd.setMemorySize(memory);
-        }
-        if (storage != null) {
-            hd.setStorageSize(storage);
-        }
-        hd.setProcessors(procs);
-        hd.setTotalComputingUnits(cores);
-    }
+		// Check cores and set default value is none
+		if (cores == null || cores < 0) {
+			cores = 1;
+		}
+
+		// Create a runtime processor
+		Processor runtimeProc = new es.bsc.conn.types.Processor();
+		runtimeProc.setComputingUnits(cores);
+		if (architecture != null && !architecture.isEmpty()) {
+			runtimeProc.setArchitecture(architecture);
+		}
+		if (speed != null) {
+			runtimeProc.setSpeed(speed);
+		}
+		List<Processor> procs = new ArrayList<>();
+		procs.add(runtimeProc);
+
+		// Add Hardware information
+		if (memory != null) {
+			hd.setMemorySize(memory);
+		}
+		if (storage != null) {
+			hd.setStorageSize(storage);
+		}
+		hd.setProcessors(procs);
+		hd.setTotalComputingUnits(cores);
+	}
 
 }
