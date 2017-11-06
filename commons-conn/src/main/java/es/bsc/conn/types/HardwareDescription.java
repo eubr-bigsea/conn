@@ -14,7 +14,7 @@ public class HardwareDescription {
     // Processor
     protected List<Processor> processors = new LinkedList<>();
     // Processor CPU computing units
-    protected int totalComputingUnits = BasicTypes.ZERO_INT;
+    protected int totalCPUComputingUnits = BasicTypes.ZERO_INT;
     protected int totalGPUComputingUnits = BasicTypes.ZERO_INT;
     protected int totalFPGAComputingUnits = BasicTypes.ZERO_INT;
     
@@ -58,12 +58,13 @@ public class HardwareDescription {
      * @param imageType
      * @param imageProperties
      */
-    public HardwareDescription(List<Processor> processors, int totalComputingUnits, float memorySize, String memoryType, float storageSize,
+    public HardwareDescription(List<Processor> processors, int totalCPUComputingUnits, int totalGPUComputingUnits, int totalFPGAComputingUnits, float memorySize, String memoryType, float storageSize,
             String storageType, int priceTimeUnit, float pricePerUnit, String imageName, String imageType,
             Map<String, String> imageProperties) {
 
         this.processors = processors;
-        this.totalComputingUnits = totalComputingUnits;
+        this.totalCPUComputingUnits = totalCPUComputingUnits;
+        this.totalGPUComputingUnits = totalGPUComputingUnits;
         this.memorySize = memorySize;
         this.memoryType = memoryType;
         this.storageSize = storageSize;
@@ -98,8 +99,8 @@ public class HardwareDescription {
      * 
      * @return
      */
-    public int getTotalComputingUnits() {
-        return totalComputingUnits;
+    public int getTotalCPUComputingUnits() {
+        return totalCPUComputingUnits;
     }
 
     /**
@@ -108,7 +109,7 @@ public class HardwareDescription {
      * @param tCU
      */
     public void setTotalComputingUnits(int tCU) {
-        this.totalComputingUnits = tCU;
+        this.totalCPUComputingUnits = tCU;
     }
     
     /**

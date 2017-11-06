@@ -194,7 +194,7 @@ public class SLURMConnector extends Connector {
         script.append(" " + masterPort);
 
         // CPU CUs
-        script.append(" " + hd.getTotalComputingUnits());
+        script.append(" " + hd.getTotalCPUComputingUnits());
 
         // GPU CUs
         script.append(" " + hd.getTotalGPUComputingUnits());
@@ -216,7 +216,7 @@ public class SLURMConnector extends Connector {
         // Limit Of Tasks
         int limitOfTasks = instDesc.getLimitOfTasks();
         if (limitOfTasks < 0) {
-            limitOfTasks = hd.getTotalComputingUnits();
+            limitOfTasks = hd.getTotalCPUComputingUnits();
         }
         script.append(" " + limitOfTasks);
 
@@ -326,7 +326,7 @@ public class SLURMConnector extends Connector {
         Map<String, String> req = new HashMap<>();
         req.put("NumNodes", "1");
 
-        req.put("NumCPUs", Integer.toString(hd.getTotalComputingUnits()));
+        req.put("NumCPUs", Integer.toString(hd.getTotalCPUComputingUnits()));
 
         if (hd.getMemorySize() > 0) {
             req.put("mem", Integer.toString((int) hd.getMemorySize() * 1024));

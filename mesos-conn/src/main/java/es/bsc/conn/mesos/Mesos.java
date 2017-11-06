@@ -84,7 +84,7 @@ public class Mesos extends Connector {
 
         List<Resource> res = new LinkedList<>();
         Value.Ranges ports = buildRanges(adaptorMinPort, adaptorMaxPort);
-        res.add(buildResource(PROP_CPUS, hd.getTotalComputingUnits()));
+        res.add(buildResource(PROP_CPUS, hd.getTotalCPUComputingUnits()));
         res.add(buildResource(PROP_MEM, GIGAS_TO_MEGAS * hd.getMemorySize()));
         res.add(buildResource(PROP_DISK, GIGAS_TO_MEGAS * hd.getStorageSize()));
         res.add(buildResource(PROP_PORTS, ports));

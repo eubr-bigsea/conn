@@ -1,5 +1,6 @@
 package es.bsc.conn.types;
 
+
 /**
  * Representation of a Processor
  * 
@@ -8,7 +9,9 @@ public class Processor {
 
     private String name = BasicTypes.UNASSIGNED_STR;
     private int computingUnits = BasicTypes.ZERO_INT;
-    private float speed = BasicTypes.UNASSIGNED_FLOAT;
+    private String type = BasicTypes.UNASSIGNED_PROCESSOR_TYPE;
+    private float internalMemory = BasicTypes.UNASSIGNED_FLOAT;
+	private float speed = BasicTypes.UNASSIGNED_FLOAT;
     private String architecture = BasicTypes.UNASSIGNED_STR;
     private String propName = BasicTypes.UNASSIGNED_STR;
     private String propValue = BasicTypes.UNASSIGNED_STR;
@@ -47,11 +50,13 @@ public class Processor {
      * 
      * @param name
      * @param cu
+     * @param type Processor type CPU|GPU|FPGA
      * @param speed
      */
-    public Processor(String name, int cu, float speed) {
+    public Processor(String name, int cu,String type, float speed) {
         this.setName(name);
         this.setComputingUnits(cu);
+        this.setType(type);
         this.setSpeed(speed);
     }
 
@@ -61,12 +66,16 @@ public class Processor {
      * 
      * @param name
      * @param cu
+     * @param type Processor type CPU|GPU|FPGA
+     * @param internalmemory Processor internal memory
      * @param speed
      * @param arch
      */
-    public Processor(String name, int cu, float speed, String arch) {
+    public Processor(String name, int cu, String type, float internalMemory, float speed, String arch) {
         this.setName(name);
         this.setComputingUnits(cu);
+        this.setType(type);
+        this.setInternalMemory(internalMemory);
         this.setSpeed(speed);
         this.setArchitecture(arch);
     }
@@ -77,14 +86,18 @@ public class Processor {
      * 
      * @param name
      * @param cu
+     * @param type Processor type CPU|GPU|FPGA
+     * @param internalmemory Processor internal memory
      * @param speed
      * @param arch
      * @param propName
      * @param propValue
      */
-    public Processor(String name, int cu, float speed, String arch, String propName, String propValue) {
+    public Processor(String name, int cu, String type, float internalMemory, float speed, String arch, String propName, String propValue) {
         this.setName(name);
         this.setComputingUnits(cu);
+        this.setType(type);
+        this.setInternalMemory(internalMemory);
         this.setSpeed(speed);
         this.setArchitecture(arch);
         this.setPropName(propName);
@@ -100,7 +113,7 @@ public class Processor {
      * @param propName
      * @param propValue
      */
-    public Processor(String name, int cu, String propName, String propValue) {
+    public Processor(String name, int cu,  String propName, String propValue) {
         this.setName(name);
         this.setComputingUnits(cu);
         this.setPropName(propName);
@@ -115,6 +128,7 @@ public class Processor {
     public Processor(Processor p) {
         this.setName(p.getName());
         this.setComputingUnits(p.getComputingUnits());
+        this.setType(p.getType());
         this.setSpeed(p.getSpeed());
         this.setArchitecture(p.getArchitecture());
         this.setPropName(p.getPropName());
@@ -183,6 +197,26 @@ public class Processor {
     public void multiply(int amount) {
         this.computingUnits = this.computingUnits * amount;
     }
+    
+    
+    public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+
+    
+   	public float getInternalMemory() {
+		return internalMemory;
+	}
+
+	public void setInternalMemory(float internalMemory) {
+		this.internalMemory = internalMemory;
+	}
+
 
     /**
      * Returns the processor speed

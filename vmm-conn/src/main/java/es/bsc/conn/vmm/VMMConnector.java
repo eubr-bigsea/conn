@@ -61,7 +61,7 @@ public class VMMConnector extends Connector {
             String vmName = appName + '-' + UUID.randomUUID().toString();
             String preferredHost = "";
             currentVMs++;
-            String vmId = client.createVM(vmName, hd.getImageName(), hd.getTotalComputingUnits(), (int) (hd.getMemorySize() * 1_024),
+            String vmId = client.createVM(vmName, hd.getImageName(), hd.getTotalCPUComputingUnits(), (int) (hd.getMemorySize() * 1_024),
                     (int) hd.getStorageSize(), appName, preferredHost, true);
 
             vmidToHardwareRequest.put(vmId, hd);

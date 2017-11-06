@@ -95,7 +95,7 @@ public class Docker extends Connector {
         String containerName = appName + '-' + UUID.randomUUID().toString();
         try {
             String containerId = dockerClient.createContainer(hd.getImageName(), containerName,
-                    exposedPorts, hd.getTotalComputingUnits(), hd.getMemorySize(), WORKER_CMD);
+                    exposedPorts, hd.getTotalCPUComputingUnits(), hd.getMemorySize(), WORKER_CMD);
 
             dockerClient.startContainer(containerId);
 
