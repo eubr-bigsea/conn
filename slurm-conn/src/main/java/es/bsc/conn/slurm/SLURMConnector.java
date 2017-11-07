@@ -118,7 +118,7 @@ public class SLURMConnector extends Connector {
             throws ConnException {
 
         // stderr stdout flags
-        String stdFlags = "-e " + logDir + File.separator + jobName + ".err -o " + logDir + File.separator + jobName + ".out";
+        String stdFlags = generateFlags(jobName, prop);// "-e " + logDir + File.separator + jobName + ".err -o " + logDir + File.separator + jobName + ".out";
         InstallationDescription instDesc = sd.getInstallation();
         StringBuilder script = new StringBuilder("#!/bin/sh\n");
 
@@ -314,7 +314,28 @@ public class SLURMConnector extends Connector {
         }
     }
 
-    private String getPWD() throws ConnException {
+    private String generateFlags(String jobName, Map<String, String> prop) {
+    	StringBuilder flags = new StringBuilder("-e " + logDir + File.separator + jobName + ".err -o " + logDir + File.separator + jobName + ".out");
+    	String queue = prop.get("queue");
+    	if (queue != null && !queue.isEmpty()){
+    		flags.append(" -p "+ queue);
+    	}
+    	String reservation = prop.get("reservation");
+    	if (reservation != null && !reservation.isEmpty()){
+    		flags.append(" --reservation="+ reservation);
+    	}
+    	String qos = prop.get("qos");
+    	if (qos != null && !qos.isEmpty()){
+    		flags.append(" --qos="+ qos);
+    	}
+    	String constraint = prop.get("constraint");
+    	if (constraint != null && !constraint.isEmpty()){
+    		flags.append(" --constraint="+ constraint);
+    	}
+    	return flags.toString();
+	}
+
+	private String getPWD() throws ConnException {
         String pwd = System.getenv("PWD");
         if (pwd == null) {
             throw new ConnException("[Connector] Unable to get PWD directory");
