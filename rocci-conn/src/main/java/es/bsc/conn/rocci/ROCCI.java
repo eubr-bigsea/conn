@@ -1,6 +1,5 @@
 package es.bsc.conn.rocci;
 
-import java.net.Inet4Address;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -55,6 +54,7 @@ public class ROCCI extends Connector {
 	private static final String PROP_VERBOSE = "verbose";
 	private static final String PROP_ATTR_OWNER = "owner";
 	private static final String PROP_ATTR_JOBNAME = "jobname";
+	private static final String PROP_NET_PREFIX = "network-prefix";
 
 	// ROCCI Properties' names
 	private static final String ROCCI_PROP_SERVER = "--endpoint ";
@@ -95,6 +95,8 @@ public class ROCCI extends Connector {
 	// Information about requests
 	private final Map<String, HardwareDescription> vmidToHardwareRequest = new HashMap<>();
 	private final Map<String, SoftwareDescription> vmidToSoftwareRequest = new HashMap<>();
+
+	private String netPrefix;
 
 	/**
 	 * Initializes the ROCCI connector with the given properties
@@ -228,6 +230,11 @@ public class ROCCI extends Connector {
 			cmdString.add(ROCCI_PROP_DEBUG);
 		}
 
+		String propPrefix = props.get(PROP_NET_PREFIX);
+		if (props.get(PROP_NET_PREFIX) != null) {
+			this.netPrefix = propPrefix;
+		}
+
 		String propVerbose = props.get(PROP_VERBOSE);
 		if (propVerbose != null) {
 			cmdString.add(ROCCI_PROP_VERBOSE);
@@ -303,16 +310,14 @@ public class ROCCI extends Connector {
 			ips = client.getResourceAddress(vmId);
 
 			for (String s : ips) {
-				// FIXME Serious hardcoding: if the local network of a different cloud differs
-				// from standard 192.168.XXX.XXX needs to be included
-				// in this if statement.
-				// IS THIS NEEDED?
-				if (s.startsWith("192.168")) {
+				if (s.startsWith(this.netPrefix)) {
 					local_ip = s;
 				}
 			}
-			if (local_ip == null) {
+			if (local_ip == null && ips.length > 0) {
 				local_ip = ips[0];
+			} else if (local_ip == null) {
+				throw new ConnException("Unable to get resource address from client");
 			}
 		} catch (ConnClientException cce) {
 			throw new ConnException("Error retrieving resource address from client", cce);
