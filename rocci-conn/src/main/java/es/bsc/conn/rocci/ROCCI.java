@@ -309,9 +309,11 @@ public class ROCCI extends Connector {
 		try {
 			ips = client.getResourceAddress(vmId);
 
-			for (String s : ips) {
-				if (s.startsWith(this.netPrefix)) {
-					local_ip = s;
+			if (this.netPrefix != null) {
+				for (String s : ips) {
+					if (s.startsWith(this.netPrefix)) {
+						local_ip = s;
+					}
 				}
 			}
 			if (local_ip == null && ips.length > 0) {
