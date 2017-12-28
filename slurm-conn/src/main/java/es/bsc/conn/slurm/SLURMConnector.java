@@ -82,8 +82,13 @@ public class SLURMConnector extends Connector {
         if (sshStr != null && !sshStr.isEmpty()) {
             ssh = Boolean.parseBoolean(sshStr);
         }
-        LOGGER.debug("[Connector] Starting Slurm client for master in "+masterName+" and ssh "+ssh);
-        this.client = new SlurmClient(masterName, ssh);
+        boolean expand = true;
+        String expandStr = props.get("expand_job");
+        if (expandStr != null && !expandStr.isEmpty()) {
+            expand = Boolean.parseBoolean(expandStr);
+        }
+        LOGGER.debug("[Connector] Starting Slurm client for master in "+masterName+", ssh "+ssh+ " and expand "+expand);
+        this.client = new SlurmClient(masterName, ssh, expand);
         
         this.network = props.get("network");
         if (this.network == null) {
