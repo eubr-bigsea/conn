@@ -28,7 +28,7 @@
 	<!-- PROPERTIES -->
 	<properties>
 		<!-- CONN CLIENTS VERSION -->
-		<conn-clients.version>1.0-63</conn-clients.version>
+		<conn-clients.version>1.0-64</conn-clients.version>
 
 		<!-- JUnit version -->
 		<junit.version>4.12</junit.version>
