@@ -270,7 +270,7 @@ public class ROCCI extends Connector {
 
 			VirtualResource vr = new VirtualResource(vmId, hd, sd, prop);
 			return vr.getId();
-		} catch (Exception e) {
+		} catch (ConnClientException e) {
 			LOGGER.error("Error creating a VM", e);
 			throw new ConnException("Error creating a VM", e);
 		}
