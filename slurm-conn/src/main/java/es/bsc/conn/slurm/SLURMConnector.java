@@ -126,7 +126,13 @@ public class SLURMConnector extends Connector {
         String stdFlags = generateFlags(jobName, prop);// "-e " + logDir + File.separator + jobName + ".err -o " + logDir + File.separator + jobName + ".out";
         InstallationDescription instDesc = sd.getInstallation();
         StringBuilder script = new StringBuilder("#!/bin/sh\n");
-
+        
+        //Add srun if specified
+        String launch_command = prop.get("launch_command");
+        if (launch_command != null && !launch_command.isEmpty()) {
+        	script.append(launch_command+"$SLURM_JOB_NODELIST");
+        }
+        
         // COMMAND
         String installDir = instDesc.getInstallDir();
         if (installDir == null) {
