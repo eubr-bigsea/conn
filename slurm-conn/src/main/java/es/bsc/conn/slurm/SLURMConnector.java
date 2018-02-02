@@ -130,7 +130,10 @@ public class SLURMConnector extends Connector {
         //Add srun if specified
         String launch_command = prop.get("launch_command");
         if (launch_command != null && !launch_command.isEmpty()) {
-        	script.append(launch_command+"$SLURM_JOB_NODELIST");
+        	LOGGER.debug("[Connector] Adding launch command to the run script");
+        	script.append(launch_command+"$SLURM_JOB_NODELIST ");
+        }else{
+        	LOGGER.debug("[Connector] launch command not found");
         }
         
         // COMMAND
