@@ -105,7 +105,7 @@
 		<dependencies>
 			<!-- Conn commons -->
 			<dependency>
-				<groupId>es.bsc</groupId>
+				<groupId>es.bsc.comm</groupId>
 				<artifactId>commons-conn</artifactId>
 				<version>${project.version}</version>
 			</dependency>
