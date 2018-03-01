@@ -55,9 +55,9 @@
 
 	<!-- SOURCE CONTROL MANAGEMENT -->
 	<scm>
-		<connection>scm:git:http://compssdev.bsc.es/gitlab/project/conn.git</connection>
-		<developerConnection>scm:git:http://compssdev.bsc.es/gitlab/project/conn.git</developerConnection>
-		<url>http://compssdev.bsc.es/gitlab/project/conn.git</url>
+		<connection>scm:git:http://compss.bsc.es/gitlab/project/conn.git</connection>
+		<developerConnection>scm:git:http://compss.bsc.es/gitlab/project/conn.git</developerConnection>
+		<url>http://compss.bsc.es/gitlab/project/conn.git</url>
 	</scm>
 
 	<!-- REPOSITORIES -->
@@ -73,7 +73,7 @@
 		<repository>
 			<id>compss-repo</id>
 			<name>BSC Workflows and Distributed Computing group</name>
-			<url>http://compssdev.bsc.es/artifactory/libs-release</url>
+			<url>http://compss.bsc.es/artifactory/libs-release</url>
 		</repository>
 	</repositories>
 
@@ -96,7 +96,7 @@
 		<repository>
 			<id>compss-repo</id>
 			<name>BSC Workflows and Distributed Computing group</name>
-			<url>http://compssdev.bsc.es/artifactory/libs-release</url>
+			<url>http://compss.bsc.es/artifactory/libs-release</url>
 		</repository>
 	</distributionManagement>
 
