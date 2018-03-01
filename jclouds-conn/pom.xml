@@ -6,7 +6,7 @@
 	<artifactId>jclouds-conn</artifactId>
 	<packaging>jar</packaging>
 	<parent>
-		<groupId>es.bsc</groupId>
+		<groupId>es.bsc.conn</groupId>
 		<artifactId>conn</artifactId>
 		<version>1.0</version>
 		<!-- <relativePath>..</relativePath> -->
