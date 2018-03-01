@@ -36,14 +36,14 @@
 	<dependencies>
 		<!-- JClouds -->
 		<dependency>
-			<groupId>es.bsc</groupId>
+			<groupId>es.bsc.conn</groupId>
 			<artifactId>jclouds-client</artifactId>
 			<version>${conn-clients.version}</version>
 		</dependency>
 
 		<!-- Conn commons -->
 		<dependency>
-			<groupId>es.bsc</groupId>
+			<groupId>es.bsc.conn</groupId>
 			<artifactId>commons-conn</artifactId>
 		</dependency>
 

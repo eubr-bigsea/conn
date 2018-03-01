@@ -36,7 +36,7 @@
 	<dependencies>
 		<!-- Conn commons -->
 		<dependency>
-			<groupId>es.bsc</groupId>
+			<groupId>es.bsc.conn</groupId>
 			<artifactId>commons-conn</artifactId>
 		</dependency>
 

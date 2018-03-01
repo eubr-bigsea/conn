@@ -39,14 +39,14 @@
 	<dependencies>
 		<!-- SLURM -->
 		<dependency>
-			<groupId>es.bsc</groupId>
+			<groupId>es.bsc.conn</groupId>
 			<artifactId>slurm-client</artifactId>
 			<version>${conn-clients.version}</version>
 		</dependency>
 
 		<!-- Conn commons -->
 		<dependency>
-			<groupId>es.bsc</groupId>
+			<groupId>es.bsc.conn</groupId>
 			<artifactId>commons-conn</artifactId>
 		</dependency>
 

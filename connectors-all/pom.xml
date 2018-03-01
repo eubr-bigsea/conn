@@ -34,37 +34,37 @@
 	<!-- DEPENDENCIES -->
 	<dependencies>
 		<dependency>
-			<groupId>es.bsc</groupId>
+			<groupId>es.bsc.conn</groupId>
 			<artifactId>dummy-conn</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>es.bsc</groupId>
+			<groupId>es.bsc.conn</groupId>
 			<artifactId>rocci-conn</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>es.bsc</groupId>
+			<groupId>es.bsc.conn</groupId>
 			<artifactId>mesos-conn</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>es.bsc</groupId>
+			<groupId>es.bsc.conn</groupId>
 			<artifactId>docker-conn</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>es.bsc</groupId>
+			<groupId>es.bsc.conn</groupId>
 			<artifactId>jclouds-conn</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>es.bsc</groupId>
+			<groupId>es.bsc.conn</groupId>
 			<artifactId>vmm-conn</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>es.bsc</groupId>
+			<groupId>es.bsc.conn</groupId>
 			<artifactId>slurm-conn</artifactId>
 			<version>${project.version}</version>
 		</dependency>
