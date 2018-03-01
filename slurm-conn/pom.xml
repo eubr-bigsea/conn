@@ -3,10 +3,11 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<!-- GENERAL INFORMATION -->
+	<groupId>es.bsc.conn</groupId>
 	<artifactId>slurm-conn</artifactId>
 	<packaging>jar</packaging>
 	<parent>
-		<groupId>es.bsc.conn</groupId>
+		<groupId>es.bsc</groupId>
 		<artifactId>conn</artifactId>
 		<version>1.0</version>
 		<!-- <relativePath>..</relativePath> -->
@@ -39,7 +40,7 @@
 	<dependencies>
 		<!-- SLURM -->
 		<dependency>
-			<groupId>es.bsc.conn</groupId>
+			<groupId>es.bsc.conn-clients</groupId>
 			<artifactId>slurm-client</artifactId>
 			<version>${conn-clients.version}</version>
 		</dependency>
@@ -61,7 +62,7 @@
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-core</artifactId>
-                        <scope>provided</scope> 
+                        <scope>provided</scope>
 		</dependency>
 	</dependencies>
 
@@ -105,4 +106,3 @@
 		</plugins>
 	</build>
 </project>
-

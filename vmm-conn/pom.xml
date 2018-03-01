@@ -3,10 +3,11 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<!-- GENERAL INFORMATION -->
+	<groupId>es.bsc.conn</groupId>
 	<artifactId>vmm-conn</artifactId>
 	<packaging>jar</packaging>
 	<parent>
-		<groupId>es.bsc.conn</groupId>
+		<groupId>es.bsc</groupId>
 		<artifactId>conn</artifactId>
 		<version>1.0</version>
 		<!-- <relativePath>..</relativePath> -->
@@ -39,7 +40,7 @@
 	<dependencies>
 		<!-- VMM -->
 		<dependency>
-			<groupId>es.bsc.conn</groupId>
+			<groupId>es.bsc.conn-clients</groupId>
 			<artifactId>vmm-client</artifactId>
 			<version>${conn-clients.version}</version>
 		</dependency>

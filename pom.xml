@@ -28,7 +28,7 @@
 	<!-- PROPERTIES -->
 	<properties>
 		<!-- CONN CLIENTS VERSION -->
-		<conn-clients.version>1.5-10</conn-clients.version>
+		<conn-clients.version>1.0-65</conn-clients.version>
 
 		<!-- JUnit version -->
 		<junit.version>4.12</junit.version>
@@ -55,9 +55,9 @@
 
 	<!-- SOURCE CONTROL MANAGEMENT -->
 	<scm>
-		<connection>scm:svn:http://compss.bsc.es/svn/projects/conn/</connection>
-		<developerConnection>scm:svn:http://compss.bsc.es/svn/projects/conn/</developerConnection>
-		<url>http://compss.bsc.es/svn/projects/conn/</url>
+		<connection>scm:git:http://compssdev.bsc.es/gitlab/project/conn.git</connection>
+		<developerConnection>scm:git:http://compssdev.bsc.es/gitlab/project/conn.git</developerConnection>
+		<url>http://compssdev.bsc.es/gitlab/project/conn.git</url>
 	</scm>
 
 	<!-- REPOSITORIES -->
@@ -72,8 +72,8 @@
 		</repository>
 		<repository>
 			<id>compss-repo</id>
-			<name>BSC Grid computing and Clusters group</name>
-			<url>http://compss.bsc.es/artifactory/libs-release</url>
+			<name>BSC Workflows and Distributed Computing group</name>
+			<url>http://compssdev.bsc.es/artifactory/libs-release</url>
 		</repository>
 	</repositories>
 
@@ -95,8 +95,8 @@
 	<distributionManagement>
 		<repository>
 			<id>compss-repo</id>
-			<name>BSC Grid computing and Clusters group</name>
-			<url>http://compss.bsc.es/artifactory/libs-release</url>
+			<name>BSC Workflows and Distributed Computing group</name>
+			<url>http://compssdev.bsc.es/artifactory/libs-release</url>
 		</repository>
 	</distributionManagement>
 
@@ -147,7 +147,7 @@
 	<modules>
 		<module>commons-conn</module>
 		<module>dummy-conn</module>
-        <module>docker-conn</module>
+                <module>docker-conn</module>
 		<module>rocci-conn</module>
 		<module>mesos-conn</module>
 		<module>jclouds-conn</module>

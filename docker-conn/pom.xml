@@ -3,10 +3,11 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<!-- GENERAL INFORMATION -->
+	<groupId>es.bsc.conn</groupId>
 	<artifactId>docker-conn</artifactId>
 	<packaging>jar</packaging>
 	<parent>
-		<groupId>es.bsc.conn</groupId>
+		<groupId>es.bsc</groupId>
 		<artifactId>conn</artifactId>
 		<version>1.0</version>
 		<!-- <relativePath>..</relativePath> -->
@@ -36,7 +37,7 @@
 	<dependencies>
 		<!-- DOCKER -->
 		<dependency>
-			<groupId>es.bsc.conn</groupId>
+			<groupId>es.bsc.conn-clients</groupId>
 			<artifactId>docker-client</artifactId>
 			<version>${conn-clients.version}</version>
 		</dependency>
@@ -112,4 +113,3 @@
 		</plugins>
 	</build>
 </project>
-

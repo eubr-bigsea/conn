@@ -3,9 +3,10 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<!-- GENERAL INFORMATION -->
+	<groupId>es.bsc.conn</groupId>
 	<artifactId>connectors-all</artifactId>
 	<parent>
-		<groupId>es.bsc.conn</groupId>
+		<groupId>es.bsc</groupId>
 		<artifactId>conn</artifactId>
 		<version>1.0</version>
 		<!-- <relativePath>..</relativePath> -->
@@ -64,9 +65,9 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>es.bsc.conn</groupId>
-			<artifactId>slurm-conn</artifactId>
-			<version>${project.version}</version>
-		</dependency>
+            <groupId>es.bsc.conn</groupId>
+            <artifactId>slurm-conn</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 	</dependencies>
 </project>
